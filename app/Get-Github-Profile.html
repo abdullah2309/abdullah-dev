@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1063NJS02R"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag('js', new Date());
+      gtag('config', 'G-1063NJS02R');
+    </script>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GitHub Employee Card Generator — Issue Your Corporate ID</title>
+    <meta name="description" content="Mint a premium GitHub-style corporate employee ID card. Enter any GitHub username to generate a live contribution record, security barcode and access clearance. Export as high-res PNG.">
+
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%23011056'/%3E%3Cpath fill='%23ffffff' d='M12 1.5C6.2 1.5 1.5 6.2 1.5 12c0 4.64 3 8.58 7.18 9.97.53.1.72-.23.72-.5 0-.25-.01-1.1-.02-2-2.9.63-3.52-1.23-3.52-1.23-.48-1.21-1.16-1.53-1.16-1.53-.95-.65.07-.64.07-.64 1.05.07 1.6 1.08 1.6 1.08.93 1.6 2.45 1.14 3.05.87.1-.68.37-1.14.66-1.4-2.32-.27-4.76-1.16-4.76-5.17 0-1.14.4-2.07 1.08-2.8-.11-.27-.47-1.34.1-2.79 0 0 .88-.28 2.88 1.08a10 10 0 0 1 5.25 0c2-1.36 2.88-1.08 2.88-1.08.57 1.45.21 2.52.1 2.79.67.73 1.08 1.66 1.08 2.8 0 4.02-2.45 4.9-4.78 5.16.38.33.71.96.71 1.95 0 1.4-.01 2.54-.01 2.89 0 .28.19.61.73.5A10.52 10.52 0 0 0 22.5 12C22.5 6.2 17.8 1.5 12 1.5z'/%3E%3C/svg%3E">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="GitHub Employee Card Generator">
+    <meta property="og:description" content="Mint a premium GitHub-style corporate employee ID card with live contribution record.">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Great+Vibes&display=swap" rel="stylesheet">
+
+    <style>
+      :root {
+        --blue: #183EEB;
+        --blue-bright: #2E56FF;
+        --blue-soft: #4D6BFF;
+        --navy: #011056;
+        --ink: #121212;
+        --paper: #FFFFFF;
+        --soft: #F6F8FA;
+        --line: #D0D7DE;
+        --muted: #656D76;
+        --green: #3FB950;
+        --g0: #EBEDF0;
+        --g1: #9BE9A8;
+        --g2: #40C463;
+        --g3: #30A14E;
+        --g4: #216E39;
+      }
+
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+
+      html { scroll-behavior: smooth; }
+
+      body {
+        font-family: 'Inter', sans-serif;
+        background: #04060D;
+        color: #EAF0FF;
+        min-height: 100vh;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* .mono { font-family: 'JetBrains Mono', monospace; } */
+
+      /* ---------- Ambient background ---------- */
+      .bg {
+        position: fixed; inset: 0; z-index: -2;
+        /* background: 
+        radial-gradient(640px 420px at 86% 12%, rgba(24, 62, 235, .30), transparent 65%), radial-gradient(760px 540px at 8% 92%, rgba(1, 16, 86, .65), transparent 65%), linear-gradient(180deg, #5376e8 0%, #727581 100%); */
+        background:
+          radial-gradient(640px 420px at 86% 12%, rgba(24, 62, 235, .30), transparent 65%),
+          radial-gradient(760px 540px at 8% 92%, rgba(1, 16, 86, .65), transparent 65%),
+          linear-gradient(180deg, #070B18 0%, #04060D 100%);
+      }
+      .bg-grid {
+        position: fixed; inset: 0; z-index: -1;
+        background-image:
+          linear-gradient(rgba(255,255,255,.032) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255,255,255,.032) 1px, transparent 1px);
+        background-size: 44px 44px;
+        -webkit-mask-image: radial-gradient(circle at 50% 38%, #000 0%, transparent 78%);
+        mask-image: radial-gradient(circle at 50% 38%, #000 0%, transparent 78%);
+      }
+
+      /* ---------- Layout ---------- */
+      main {
+        max-width: 1280px;
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: 56px 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 76px;
+      }
+
+      @keyframes rise { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+
+      /* ---------- Control panel ---------- */
+      .panel { width: 400px; flex-shrink: 0; animation: rise .7s .08s cubic-bezier(.22,1,.36,1) both; }
+
+      .eyebrow {
+        display: flex; align-items: center; gap: 10px;
+        font-size: 10px; letter-spacing: .24em; color: #7E8DB3; font-weight: 500;
+      }
+      .eyebrow .mark { color: var(--blue-soft); }
+
+      h1 {
+        font-size: 34px; line-height: 1.12; font-weight: 800;
+        letter-spacing: -.03em; color: #F2F5FF; margin: 16px 0 12px;
+      }
+      .grad {
+        background: linear-gradient(90deg, #6E8BFF, #B7C6FF);
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+      }
+      .sub { font-size: 13.5px; line-height: 1.7; color: #93A0BF; margin-bottom: 28px; }
+
+      .field-label { display: block; font-size: 9px; letter-spacing: .22em; font-weight: 500; color: #6C7A9E; margin-bottom: 8px; }
+
+      .field {
+        display: flex; align-items: center; gap: 8px; height: 52px; padding: 0 14px;
+        border-radius: 12px; background: rgba(255,255,255,.045);
+        border: 1px solid rgba(255,255,255,.1);
+        transition: border-color .2s, box-shadow .2s, background .2s;
+      }
+      .field:focus-within {
+        border-color: rgba(77,107,255,.7);
+        box-shadow: 0 0 0 3px rgba(24,62,235,.25);
+        background: rgba(255,255,255,.06);
+      }
+      .field .at { color: #5B6C93; font-size: 14px; }
+      .field input {
+        flex: 1; min-width: 0; background: none; border: 0; outline: 0;
+        color: #F2F5FF; 
+        font-family: 'JetBrains Mono', monospace; font-size: 15px;
+      }
+      .field input::placeholder { color: #4A5878; }
+
+      .btn-primary {
+        width: 100%; height: 52px; margin-top: 14px;
+        border: 0; border-radius: 12px; cursor: pointer;
+        display: flex; align-items: center; justify-content: center; gap: 9px;
+        font-family: 'Inter', sans-serif; font-weight: 700; font-size: 14.5px; color: #fff;
+        background: linear-gradient(180deg, var(--blue-bright), var(--blue));
+        box-shadow: 0 10px 26px rgba(24,62,235,.35), inset 0 1px 0 rgba(255,255,255,.22);
+        transition: transform .15s, box-shadow .15s, opacity .2s;
+      }
+      .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 14px 32px rgba(24,62,235,.45), inset 0 1px 0 rgba(255,255,255,.22); }
+      .btn-primary:active { transform: translateY(1px); box-shadow: 0 4px 14px rgba(24,62,235,.35); }
+      .btn-primary:disabled { opacity: .6; cursor: wait; transform: none; }
+
+      .btn-ghost {
+        width: 100%; height: 46px; margin-top: 10px; cursor: pointer;
+        display: flex; align-items: center; justify-content: center; gap: 9px;
+        border-radius: 12px; border: 1px solid rgba(255,255,255,.16);
+        background: transparent; color: #C9D4F2;
+        font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px;
+        letter-spacing: .04em; transition: background .2s, border-color .2s;
+      }
+      .btn-ghost:hover { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.28); }
+      .btn-ghost:disabled { opacity: .55; cursor: wait; }
+
+      .status { display: flex; align-items: center; gap: 9px; font-size: 9px; letter-spacing: .16em; color: #5F6F94; margin-top: 18px; }
+      .pulse {
+        width: 7px; height: 7px; border-radius: 50%; background: var(--green);
+        box-shadow: 0 0 0 0 rgba(63,185,80,.6); animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(63,185,80,.55); }
+        70% { box-shadow: 0 0 0 7px rgba(63,185,80,0); }
+        100% { box-shadow: 0 0 0 0 rgba(63,185,80,0); }
+      }
+
+      .feats { list-style: none; margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
+      .feats li { display: flex; align-items: center; gap: 10px; font-size: 12.5px; color: #8A97B8; }
+      .feats svg { color: var(--green); flex-shrink: 0; }
+
+      .fine { margin-top: 24px; font-size: 10.5px; color: #57658A; line-height: 1.8; }
+      .fine a { color: #8FA3D9; text-decoration: none; border-bottom: 1px dotted rgba(143,163,217,.4); }
+      .fine a:hover { color: #C9D6FF; }
+
+      /* ---------- Card stage ---------- */
+      .stage { flex: 1; min-width: 0; animation: rise .8s cubic-bezier(.22,1,.36,1) both; }
+
+      .stage-cap {
+        display: flex; justify-content: space-between;
+        font-size: 9px; letter-spacing: .24em; color: #5F6F94; margin-bottom: 16px;
+      }
+
+      .stage-fit { position: relative; }
+      .scaler { width: 680px; margin: 0 auto; transform-origin: top center; }
+      .card-scene { perspective: 1400px; }
+      .card3d { transition: transform .25s ease; will-change: transform; }
+
+      /* ---------- The ID card ---------- */
+      .idcard {
+        position: relative; width: 680px; height: 430px;
+        background: var(--paper); border-radius: 18px; overflow: hidden;
+        display: flex; flex-direction: column; user-select: none; cursor: default;
+        box-shadow: 0 34px 68px -18px rgba(2, 8, 40, .7), 0 0 0 1px rgba(255,255,255,.07);
+      }
+      .idcard.issued { animation: stamp .5s cubic-bezier(.22,1,.36,1); }
+      @keyframes stamp { 0% { transform: scale(.97); } 60% { transform: scale(1.006); } 100% { transform: scale(1); } }
+
+      /* Scanline while issuing */
+      .scanline { position: absolute; inset: 0; z-index: 5; pointer-events: none; opacity: 0; transition: opacity .25s; overflow: hidden; border-radius: inherit; }
+      .idcard.loading .scanline { opacity: 1; }
+      .scanline::before {
+        content: ''; position: absolute; left: 0; right: 0; height: 46%; top: -50%;
+        background: linear-gradient(180deg, transparent, rgba(77,107,255,.32) 50%, transparent);
+        animation: scan 1.1s linear infinite;
+      }
+      @keyframes scan { to { top: 110%; } }
+
+      /* Cursor glare */
+      .glare {
+        position: absolute; inset: 0; z-index: 6; pointer-events: none; border-radius: inherit;
+        background: radial-gradient(340px 340px at var(--gx, 70%) var(--gy, 15%), rgba(255,255,255,.17), transparent 62%);
+        opacity: 0; transition: opacity .35s;
+      }
+      .card3d:hover .glare { opacity: 1; }
+
+      .mark { display: inline-block; }
+      .mark svg { width: 100%; height: 100%; display: block; }
+
+      /* Card header band */
+      .card-head {
+        height: 54px; flex-shrink: 0; padding: 0 22px;
+        display: flex; align-items: center; justify-content: space-between;
+        background: linear-gradient(90deg, var(--blue) 0%, #1233D6 100%);
+      }
+      .head-left { display: flex; align-items: center; gap: 11px; min-width: 0; }
+      .head-left .mark { width: 21px; height: 21px; color: #fff; }
+      .wordmark { font-size: 15px; font-weight: 800; letter-spacing: .14em; color: #fff; }
+      .head-sep { width: 1px; height: 16px; background: rgba(255,255,255,.35); }
+      .head-sub { font-size: 8px; letter-spacing: .24em; color: rgba(255,255,255,.82); white-space: nowrap; }
+      .head-right { font-size: 8px; letter-spacing: .2em; color: rgba(255,255,255,.72); white-space: nowrap; }
+
+      .card-body { flex: 1; display: flex; min-height: 0; }
+
+      /* Navy identity panel */
+      .card-navy {
+        width: 216px; flex-shrink: 0; position: relative; overflow: hidden;
+        padding: 18px 20px 16px; display: flex; flex-direction: column; gap: 5px;
+         /* gap: 8px; */
+        background: linear-gradient(180deg, #011056 0%, #010B3F 100%);
+      }
+      .card-navy::before {
+        content: ''; position: absolute; inset: 0;
+        background: repeating-linear-gradient(135deg, rgba(255,255,255,.028) 0 1px, transparent 1px 7px);
+        pointer-events: none;
+      }
+      .navy-mark { position: absolute; right: -28px; bottom: -32px; width: 150px; height: 150px; color: rgba(255,255,255,.06); pointer-events: none; }
+
+      .photo {
+        width: 148px; height: 140px; object-fit: cover; display: block;
+        border-radius: 12px; border: 3px solid rgba(255,255,255,.92);
+        box-shadow: 0 8px 20px rgba(0,0,0,.35); background: var(--navy);
+      }
+      .emp-name { font-size: 17px; font-weight: 800; color: #fff; letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .emp-handle { font-size: 11px; color: #9DB4FF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .emp-role { font-size: 8.5px; letter-spacing: .18em; color: #AAB8E8; line-height: 1.6; }
+      .navy-div { height: 1px; background: rgba(255,255,255,.12); margin: 5px 0; flex-shrink: 0; }
+
+      .chip-row { display: flex; align-items: center; gap: 11px; margin-top: 2px; }
+      .chip {
+        width: 38px; height: 28px; border-radius: 6px; position: relative; flex-shrink: 0;
+        background: linear-gradient(135deg, #F0D48A 0%, #C9A03C 45%, #EAD189 100%);
+        box-shadow: inset 0 0 0 1px rgba(0,0,0,.28), 0 2px 6px rgba(0,0,0,.3);
+      }
+      .chip i { position: absolute; left: 5px; right: 5px; height: 1px; background: rgba(0,0,0,.35); }
+      .chip i:first-child { top: 10px; }
+      .chip i:last-child { bottom: 10px; }
+      .chip::before { content: ''; position: absolute; left: 50%; top: 4px; bottom: 4px; width: 1px; background: rgba(0,0,0,.35); }
+      .nfc { width: 20px; height: 20px; }
+
+      .access { margin-top: auto; }
+      .access-label { font-size: 7px; letter-spacing: .22em; color: rgba(255,255,255,.55); }
+      .access-row { display: flex; align-items: center; justify-content: space-between; margin-top: 5px; }
+      .access-val { font-size: 13px; font-weight: 800; color: #fff; letter-spacing: .02em; }
+      .dots { display: flex; gap: 4px; }
+      .dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,.14); }
+      .dot.on { background: var(--blue-soft); box-shadow: 0 0 6px rgba(77,107,255,.9); }
+
+      .micro { font-size: 6.3px; letter-spacing: .1em; color: rgba(255,255,255,.35); line-height: 1.7; margin-top: 8px; }
+
+      /* White records panel */
+      .card-white {
+        flex: 1; min-width: 0; position: relative; overflow: hidden;
+        padding: 16px 20px 14px; display: flex; flex-direction: column; gap: 12px;
+        background: var(--paper);
+      }
+      .white-mark { position: absolute; right: -34px; bottom: -44px; width: 225px; height: 225px; color: rgba(1,16,86,.045); pointer-events: none; }
+      .card-white > *:not(.white-mark) { position: relative; z-index: 1; }
+
+      .white-top { display: flex; align-items: center; justify-content: space-between; }
+      .url-chip {
+        font-size: 10px; color: #1F2328; background: var(--soft);
+        border: 1px solid var(--line); border-radius: 6px; padding: 4px 9px;
+        max-width: 70%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      .card-status { display: flex; align-items: center; gap: 6px; font-size: 8.5px; letter-spacing: .18em; color: #1A7F37; font-weight: 700; }
+      .card-status i { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+
+      .details { display: grid; grid-template-columns: 1fr 1fr 1.25fr; gap: 14px; }
+      .details label { display: block; font-family: 'JetBrains Mono', monospace; font-size: 7.5px; letter-spacing: .18em; color: var(--muted); margin-bottom: 3px; }
+      .details b { display: block; font-size: 12.5px; font-weight: 700; color: #1F2328; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+      .contrib { background: var(--soft); border: 1px solid var(--line); border-radius: 10px; padding: 11px 12px 9px; }
+      .contrib-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+      .contrib-title { font-size: 7.5px; letter-spacing: .16em; color: var(--muted); font-weight: 500; }
+      .contrib-total { display: flex; align-items: baseline; gap: 5px; }
+      .contrib-total b { font-size: 15px; font-weight: 800; color: #1F2328; letter-spacing: -.02em; }
+      .contrib-total i { font-family: 'JetBrains Mono', monospace; font-style: normal; font-size: 7px; letter-spacing: .14em; color: var(--muted); }
+
+      .chart { display: flex; gap: 2px; margin-bottom: 8px; }
+      .gcol { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+      .glabel { height: 11px; font-size: 7px; letter-spacing: .04em; color: #8B949E; line-height: 11px; white-space: nowrap; overflow: visible; }
+      .cell { width: 100%; aspect-ratio: 1 / 1; border-radius: 1.5px; background: var(--g0); }
+      .cell.void { visibility: hidden; }
+      .cell.future { background: var(--soft); box-shadow: inset 0 0 0 1px #E4E8EE; }
+      .cell.l1 { background: var(--g1); } .cell.l2 { background: var(--g2); }
+      .cell.l3 { background: var(--g3); } .cell.l4 { background: var(--g4); }
+
+      .legend { display: flex; align-items: center; justify-content: flex-end; gap: 3px; font-size: 7px; letter-spacing: .08em; color: var(--muted); }
+      .legend .lgc { width: 9px; height: 9px; border-radius: 2px; }
+      .legend .lg0 { background: var(--g0); } .legend .lg1 { background: var(--g1); }
+      .legend .lg2 { background: var(--g2); } .legend .lg3 { background: var(--g3); }
+      .legend .lg4 { background: var(--g4); }
+      .legend span { margin: 0 3px; }
+
+      .stats { display: flex; align-items: center; }
+      .stats > div { padding-right: 18px; margin-right: 18px; border-right: 1px solid var(--line); }
+      .stats > div:last-child { border-right: 0; margin-right: 0; padding-right: 0; }
+      .stats b { display: block; font-size: 15px; font-weight: 800; color: #1F2328; letter-spacing: -.02em; }
+      .stats span { display: block; font-family: 'JetBrains Mono', monospace; font-size: 7px; letter-spacing: .14em; color: var(--muted); margin-top: 2px; }
+
+      .card-foot { margin-top: auto; display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; }
+      .sig { min-width: 0; }
+      .sig-text {
+        font-family: 'Great Vibes', cursive; font-size: 21px; color: #1F2328;
+        transform: rotate(-2deg); transform-origin: bottom left;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;
+        line-height: 1.15; margin-bottom: 2px;
+      }
+      .sig-line { height: 1px; background: rgba(18,18,18,.55); }
+      .sig-label { font-size: 6.5px; letter-spacing: .18em; color: var(--muted); margin-top: 4px; }
+
+      .holo {
+        width: 46px; height: 46px; border-radius: 50%; flex-shrink: 0;
+        display: flex; align-items: center; justify-content: center;
+        background: linear-gradient(135deg, var(--blue) 0%, #00C2FF 32%, #8A5CFF 66%, var(--blue) 100%);
+        box-shadow: 0 3px 10px rgba(24,62,235,.35);
+      }
+      .holo .mark { width: 19px; height: 19px; color: rgba(255,255,255,.92); }
+
+      .barcode-box { text-align: right; flex-shrink: 0; }
+      .barcode { display: flex; justify-content: flex-end; }
+      .barcode svg { display: block; height: 30px; }
+      .barcode svg rect { fill: var(--ink); }
+      .bc-num { font-size: 7.5px; letter-spacing: .28em; color: var(--ink); margin-top: 4px; font-weight: 500; }
+
+      /* ---------- Toast ---------- */
+      .toast {
+        position: fixed; left: 50%; bottom: 26px; z-index: 9999;
+        transform: translate(-50%, 16px); opacity: 0; pointer-events: none;
+        background: #0E1526; border: 1px solid rgba(255,255,255,.1); border-left: 3px solid var(--blue-soft);
+        color: #DDE6FF; font-family: 'JetBrains Mono', monospace; font-size: 11px;
+        padding: 13px 20px; border-radius: 10px; box-shadow: 0 16px 40px rgba(0,0,0,.5);
+        transition: transform .3s cubic-bezier(.22,1,.36,1), opacity .3s; max-width: 88vw;
+      }
+      .toast.show { transform: translate(-50%, 0); opacity: 1; }
+      .toast.error { border-left-color: #FF5C5C; }
+      .toast.ok { border-left-color: var(--green); }
+
+      /* ---------- Responsive ---------- */
+      @media (max-width: 1120px) {
+        main { flex-direction: column; gap: 48px; padding-top: 40px; }
+        .stage { order: -1; width: 100%; max-width: 760px; }
+        .panel { width: 100%; max-width: 560px; }
+      }
+      @media (max-width: 520px) {
+        main { padding: 32px 18px 48px; }
+        h1 { font-size: 28px; }
+        .stage-cap { font-size: 8px; letter-spacing: .16em; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg"></div>
+    <div class="bg-grid"></div>
+
+    <main>
+      <!-- ============ CONTROL DECK ============ -->
+      <aside class="panel">
+        <div class="eyebrow mono">
+          <span class="mark" data-mark style="width:18px;height:18px"></span>
+          <!-- CARD FOUNDRY · EMPLOYEE DIVISION -->
+          Card Foundry · Employee Division
+        </div>
+
+        <h1>Issue your own<br><span class="grad">GitHub employee card.</span></h1>
+        <p class="sub">
+          Enter any GitHub username to mint a corporate ID live contribution
+          record, security barcode, holographic seal and access clearance included.
+        </p>
+
+        <label class="field-label mono" for="usernameInput">Github Identity</label>
+        <div class="field">
+          <span class="at mono">@</span>
+          <input id="usernameInput" type="text" placeholder="octocat" maxlength="39" autocomplete="off" spellcheck="false" />
+        </div>
+
+        <button type="button" class="btn-primary" id="generateBtn">
+          <span id="genLabel">Issue card</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+
+        <button type="button" class="btn-ghost" id="downloadBtn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 11l5 5 5-5M5 21h14"/></svg>
+          <span id="dlLabel">Download PNG · 2×</span>
+        </button>
+
+        <div class="status mono"> Systems Nominal · Github API v3 </div>
+
+        <ul class="feats">
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Live contribution graph — last 12 months</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Verified identity, department &amp; clearance level</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> High-resolution 2× PNG export, front-of-card</li>
+        </ul>
+
+        <p class="fine">
+          <!-- Fan-made concept · Made by <a href="https://twitter.com/ann_nnng" target="_blank" rel="noopener">@Abdullah</a> -->
+          Fan-made concept · Made by <a target="_blank" rel="noopener">@Abdullah</a>
+          Not affiliated with GitHub, Inc.
+        </p>
+      </aside>
+
+      <!-- ============ CARD STAGE ============ -->
+      <section class="stage">
+        <div class="stage-cap mono">
+          <span>Live Preview</span>
+          <span>Holo Series</span>
+        </div>
+
+        <div class="stage-fit" id="stageFit">
+          <div class="scaler" id="scaler">
+            <div class="card-scene" id="cardScene">
+              <div class="card3d" id="card3d">
+                <div class="idcard" id="idcard">
+                  <div class="scanline"></div>
+                  <div class="glare"></div>
+
+                  <!-- Header band -->
+                  <header class="card-head">
+                    <div class="head-left">
+                      <span class="mark" data-mark></span>
+                      <span class="wordmark">GITHUB</span>
+                      <span class="head-sep"></span>
+                      <span class="head-sub mono">EMPLOYEE IDENTIFICATION</span>
+                    </div>
+                    <div class="head-right mono" id="headSeries">SERIES 2025 · SAN FRANCISCO, CA</div>
+                  </header>
+
+                  <div class="card-body">
+                    <!-- Navy identity panel -->
+                    <aside class="card-navy">
+                      <span class="mark navy-mark" data-mark></span>
+                      <img id="avatarImg" class="photo" alt="Employee photo" crossorigin="anonymous" />
+                      <div class="emp-name" id="cardName">NEW HIRE</div>
+                      <div class="emp-handle mono" id="cardHandle">@yourhandle</div>
+                      <div class="emp-role" id="cardRole">SOFTWARE ENGINEER I</div>
+                      <div class="navy-div"></div>
+                      <div class="chip-row">
+                        <div class="chip"><i></i><i></i></div>
+                        <svg class="nfc" viewBox="0 0 24 24" fill="none" stroke="#8FA3E8" stroke-width="1.7" stroke-linecap="round">
+                          <path d="M5.5 9a3.6 3.6 0 0 1 0 6"/>
+                          <path d="M8.7 6.8a7.4 7.4 0 0 1 0 10.4"/>
+                          <path d="M12 4.6a11 11 0 0 1 0 14.8"/>
+                        </svg>
+                      </div>
+                      <div class="access">
+                        <div class="access-label mono">ACCESS LEVEL</div>
+                        <div class="access-row">
+                          <span class="access-val" id="cardAccess">PROVISIONAL</span>
+                          <span class="dots" id="accessDots"></span>
+                        </div>
+                      </div>
+                      <div class="micro mono">88 COLIN P KELLY JR ST · SAN FRANCISCO · CA 94107 · GITHUB INC.</div>
+                    </aside>
+
+                    <!-- White records panel -->
+                    <section class="card-white">
+                      <span class="mark white-mark" data-mark></span>
+
+                      <div class="white-top">
+                        <span class="url-chip mono" id="urlChip">github.com/—</span>
+                        <span class="card-status mono"><i></i>ACTIVE</span>
+                      </div>
+
+                      <div class="details">
+                        <div><label>JOINED</label><b id="cardJoined">—</b></div>
+                        <div><label>LOCATION</label><b id="cardLocation">—</b></div>
+                        <div><label>DEPARTMENT</label><b id="cardDept">AWAITING ASSIGNMENT</b></div>
+                      </div>
+
+                      <div class="contrib">
+                        <div class="contrib-head">
+                          <span class="contrib-title mono">CONTRIBUTION RECORD — LAST 12 MONTHS</span>
+                          <span class="contrib-total"><b id="statTotal">0</b><i>TOTAL</i></span>
+                        </div>
+                        <div class="chart" id="chart"></div>
+                        <div class="legend mono">
+                          <span>LESS</span>
+                          <i class="lgc lg0"></i><i class="lgc lg1"></i><i class="lgc lg2"></i><i class="lgc lg3"></i><i class="lgc lg4"></i>
+                          <span>MORE</span>
+                        </div>
+                      </div>
+
+                      <div class="stats">
+                        <div><b id="statActive">0</b><span>ACTIVE DAYS</span></div>
+                        <div><b id="statBest">0</b><span>BEST DAY</span></div>
+                        <div><b id="statStreak">0</b><span>LONGEST STREAK</span></div>
+                      </div>
+
+                      <div class="card-foot">
+                        <div class="sig">
+                          <div class="sig-text" id="cardSignature">unsigned</div>
+                          <div class="sig-line"></div>
+                          <div class="sig-label mono">AUTHORIZED SIGNATURE</div>
+                        </div>
+                        <div class="holo"><span class="mark" data-mark></span></div>
+                        <div class="barcode-box">
+                          <div class="barcode" id="barcode"></div>
+                          <div class="bc-num mono" id="bcNum">0000-00000</div>
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script>
+      /* ================= Constants & refs ================= */
+      const GH_API = 'https://api.github.com/users/';
+      const CONTRIB = (u, y) => `https://github-contributions-api.jogruber.de/v4/${u}?y=${y}`;
+      const MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+      const DEPTS = ['PLATFORM ENGINEERING','DEVELOPER EXPERIENCE','OPEN SOURCE OFFICE','SECURITY LABS','INFRASTRUCTURE','API PLATFORM','MOBILE SYSTEMS'];
+      const GH_PATH = 'M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.26.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755-1.087-.744.084-.729.084-.729 1.205.084 1.84 1.236 1.84 1.236 1.07 1.835 2.807 1.305 3.492.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12z';
+
+      const $ = (id) => document.getElementById(id);
+      const usernameInput = $('usernameInput');
+      const generateBtn = $('generateBtn'), genLabel = $('genLabel');
+      const downloadBtn = $('downloadBtn'), dlLabel = $('dlLabel');
+      const idcard = $('idcard'), card3d = $('card3d');
+      const els = {
+        name: $('cardName'), handle: $('cardHandle'), role: $('cardRole'),
+        joined: $('cardJoined'), location: $('cardLocation'), dept: $('cardDept'),
+        access: $('cardAccess'), dots: $('accessDots'), avatar: $('avatarImg'),
+        urlChip: $('urlChip'), signature: $('cardSignature'),
+        chart: $('chart'), barcode: $('barcode'), bcNum: $('bcNum'),
+        total: $('statTotal'), active: $('statActive'), best: $('statBest'), streak: $('statStreak'),
+      };
+
+      let busyIssue = false, busyDownload = false, userActed = false;
+
+      /* Inject GitHub mark into placeholders */
+      document.querySelectorAll('[data-mark]').forEach((el) => {
+        el.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="${GH_PATH}"/></svg>`;
+      });
+
+      /* ================= Helpers ================= */
+      const clampStr = (s, n) => (s.length > n ? s.slice(0, n - 1) + '…' : s);
+      const parseDate = (s) => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+      const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      const hashStr = (s) => { let h = 0; for (const c of s) h = (h * 33 + c.charCodeAt(0)) >>> 0; return h; };
+
+      function toast(msg, type = '') {
+        const t = $('toast');
+        t.textContent = msg;
+        t.className = 'toast show ' + type;
+        clearTimeout(toast._t);
+        toast._t = setTimeout(() => t.classList.remove('show'), 3400);
+      }
+
+      function roleFor(createdAt) {
+        const years = (Date.now() - new Date(createdAt)) / (365.25 * 24 * 3600 * 1000);
+        if (years >= 12) return 'PRINCIPAL SOFTWARE ENGINEER';
+        if (years >= 8) return 'STAFF SOFTWARE ENGINEER';
+        if (years >= 5) return 'SENIOR SOFTWARE ENGINEER';
+        if (years >= 2) return 'SOFTWARE ENGINEER II';
+        return 'SOFTWARE ENGINEER I';
+      }
+
+      function accessFrom(total) {
+        if (total >= 1000) return ['LEVEL V', 5];
+        if (total >= 500) return ['LEVEL IV', 4];
+        if (total >= 200) return ['LEVEL III', 3];
+        if (total >= 50) return ['LEVEL II', 2];
+        if (total >= 10) return ['LEVEL I', 1];
+        return ['PROVISIONAL', 0];
+      }
+
+      function renderDots(idx) {
+        els.dots.innerHTML = '';
+        for (let i = 0; i < 5; i++) {
+          const d = document.createElement('span');
+          d.className = 'dot' + (i < idx ? ' on' : '');
+          els.dots.appendChild(d);
+        }
+      }
+
+      function placeholderAvatar() {
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320"><rect width="320" height="320" fill="#011056"/><g transform="translate(64,64) scale(8)"><path fill="#3D5BFF" d="${GH_PATH}"/></g></svg>`;
+        return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+      }
+      els.avatar.onerror = () => { els.avatar.src = placeholderAvatar(); };
+
+      /* ================= Barcode (deterministic, seeded) ================= */
+      function barcodeSVG(text) {
+        let seed = 7;
+        for (const ch of (text || '0')) seed = (seed * 131 + ch.charCodeAt(0)) >>> 0;
+        const rand = () => {
+          seed ^= seed << 13; seed >>>= 0;
+          seed ^= seed >> 17;
+          seed ^= seed << 5; seed >>>= 0;
+          return seed / 4294967296;
+        };
+        let x = 0; const H = 34; const rects = [];
+        for (let i = 0; i < 46; i++) {
+          const w = 1 + Math.floor(rand() * 3);
+          rects.push(`<rect x="${x}" y="0" width="${w}" height="${H}"/>`);
+          x += w + 1 + Math.floor(rand() * 2);
+        }
+        return `<svg xmlns="http://www.w3.org/2000/svg" width="${x}" height="${H}" viewBox="0 0 ${x} ${H}">${rects.join('')}</svg>`;
+      }
+      function setBarcode(text) {
+        els.barcode.innerHTML = barcodeSVG(text);
+        els.bcNum.textContent = text;
+      }
+
+      /* ================= Contribution chart ================= */
+      function renderChart(days) {
+        els.chart.innerHTML = '';
+        if (!days || !days.length) return;
+
+        const sorted = [...days].sort((a, b) => parseDate(a.date) - parseDate(b.date));
+        const cols = []; let cur = [];
+
+        // Leading pad so the first column aligns to the correct weekday
+        const firstDow = parseDate(sorted[0].date).getDay();
+        for (let i = 0; i < firstDow; i++) cur.push(null);
+
+        sorted.forEach((d) => {
+          cur.push(d);
+          if (cur.length === 7) { cols.push(cur); cur = []; }
+        });
+        if (cur.length) { while (cur.length < 7) cur.push(null); cols.push(cur); }
+
+        const now = new Date(); now.setHours(23, 59, 59, 999);
+        let prevMonth = null;
+        const frag = document.createDocumentFragment();
+
+        cols.forEach((col, ci) => {
+          const gc = document.createElement('div'); gc.className = 'gcol';
+          const lab = document.createElement('div'); lab.className = 'glabel mono';
+          const firstReal = col.find(Boolean);
+          if (firstReal) {
+            const dt = parseDate(firstReal.date);
+            if (dt.getMonth() !== prevMonth) {
+              if (ci === 0 ? dt.getDate() <= 7 : true) lab.textContent = MONTHS[dt.getMonth()];
+              prevMonth = dt.getMonth();
+            }
+          }
+          gc.appendChild(lab);
+
+          col.forEach((d) => {
+            const c = document.createElement('div');
+            if (!d) { c.className = 'cell void'; }
+            else {
+              const future = parseDate(d.date) > now && d.count === 0;
+              c.className = 'cell l' + (future ? 0 : d.level) + (future ? ' future' : '');
+              c.title = `${d.date} — ${d.count} contribution${d.count === 1 ? '' : 's'}`;
+            }
+            gc.appendChild(c);
+          });
+          frag.appendChild(gc);
+        });
+
+        els.chart.appendChild(frag);
+      }
+
+      function computeStats(days) {
+        let total = 0, active = 0, best = 0, streak = 0, cur = 0;
+        [...days].sort((a, b) => parseDate(a.date) - parseDate(b.date)).forEach((d) => {
+          total += d.count;
+          if (d.count > 0) {
+            active++; cur++;
+            if (cur > streak) streak = cur;
+            if (d.count > best) best = d.count;
+          } else cur = 0;
+        });
+        return { total, active, best, streak };
+      }
+
+      /* ================= Dummy data (initial preview) ================= */
+      function dummyDays() {
+        const out = [];
+        const today = new Date(); today.setHours(0, 0, 0, 0);
+        const start = new Date(today); start.setDate(start.getDate() - 364);
+        start.setDate(start.getDate() - start.getDay());
+        for (let d = new Date(start); d <= today; d.setDate(d.getDate() + 1)) {
+          const weekend = d.getDay() === 0 || d.getDay() === 6;
+          const r = Math.random();
+          let lvl = 0;
+          if (weekend) { if (r > 0.82) lvl = 1; if (r > 0.94) lvl = 2; }
+          else { if (r > 0.35) lvl = 1; if (r > 0.6) lvl = 2; if (r > 0.82) lvl = 3; if (r > 0.94) lvl = 4; }
+          out.push({ date: iso(d), count: lvl ? lvl * (1 + Math.floor(Math.random() * 8)) : 0, level: lvl });
+        }
+        return out;
+      }
+
+      /* ================= Populate card ================= */
+      function populate(u, days) {
+        const rawName = u.name || u.login;
+        els.name.textContent = rawName.toUpperCase();
+        els.handle.textContent = '@' + u.login;
+        els.role.textContent = roleFor(u.created_at);
+
+        const empNo = `${new Date().getFullYear()}-${String(u.id).padStart(5, '0')}`;
+        const jd = new Date(u.created_at);
+        els.joined.textContent = `${MONTHS[jd.getMonth()]} ${jd.getFullYear()}`;
+        els.location.textContent = u.location ? clampStr(u.location.toUpperCase(), 24) : 'REMOTE / EARTH';
+        els.dept.textContent = DEPTS[hashStr(u.login) % DEPTS.length];
+
+        els.avatar.src = u.avatar_url + (u.avatar_url.includes('?') ? '&' : '?') + 's=320';
+        els.urlChip.textContent = 'github.com/' + u.login;
+        els.signature.textContent = rawName;
+
+        const stats = computeStats(days || []);
+        els.total.textContent = stats.total.toLocaleString('en-US');
+        els.active.textContent = stats.active.toLocaleString('en-US');
+        els.best.textContent = stats.best.toLocaleString('en-US');
+        els.streak.textContent = stats.streak.toLocaleString('en-US');
+
+        const [label, dots] = accessFrom(stats.total);
+        els.access.textContent = label;
+        renderDots(dots);
+
+        renderChart(days || []);
+        setBarcode(empNo);
+
+        idcard.classList.remove('issued');
+        void idcard.offsetWidth; // restart animation
+        idcard.classList.add('issued');
+      }
+
+      /* ================= Fetching ================= */
+      async function fetchContributions(login) {
+        try {
+          const r = await fetch(CONTRIB(login, 'last'));
+          if (r.ok) {
+            const d = await r.json();
+            if (d && Array.isArray(d.contributions) && d.contributions.length) return d.contributions;
+          }
+        } catch (_) {}
+        const year = new Date().getFullYear();
+        const r2 = await fetch(CONTRIB(login, year));
+        if (!r2.ok) return [];
+        const d2 = await r2.json();
+        return d2.contributions || [];
+      }
+
+      async function issueCard(raw) {
+        if (busyIssue) return;
+        userActed = true;
+        const login = (raw || usernameInput.value).trim().replace(/^@/, '');
+        if (!login) { toast('Enter a GitHub username to issue a card.', 'error'); usernameInput.focus(); return; }
+        usernameInput.value = login;
+
+        busyIssue = true;
+        generateBtn.disabled = true; downloadBtn.disabled = true;
+        genLabel.textContent = 'Authenticating…';
+        idcard.classList.add('loading');
+
+        try {
+          const res = await fetch(GH_API + encodeURIComponent(login), { headers: { 'Accept': 'application/vnd.github+json' } });
+          if (res.status === 404) throw new Error('NOT_FOUND');
+          if (res.status === 403) throw new Error('RATE');
+          if (!res.ok) throw new Error('NET');
+          const user = await res.json();
+          const contribs = await fetchContributions(user.login);
+          populate(user, contribs);
+          try { history.replaceState(null, '', location.pathname + '?u=' + encodeURIComponent(user.login)); } catch (_) {}
+          toast(`Identity verified — card issued to ${user.login}.`, 'ok');
+        } catch (e) {
+          const msgs = {
+            NOT_FOUND: 'Identity not found in the GitHub directory.',
+            RATE: 'API rate limit reached — try again in a few minutes.',
+            NET: 'Network error — please try again.',
+          };
+          toast(msgs[e.message] || 'Something went wrong. Please try again.', 'error');
+        } finally {
+          busyIssue = false;
+          generateBtn.disabled = false; downloadBtn.disabled = false;
+          genLabel.textContent = 'Issue card';
+          idcard.classList.remove('loading');
+        }
+      }
+
+      /* ================= Download (html2canvas) ================= */
+      async function downloadCard() {
+        if (busyDownload) return;
+        busyDownload = true;
+        downloadBtn.disabled = true; generateBtn.disabled = true;
+        dlLabel.textContent = 'Rendering…';
+
+        try {
+          await document.fonts.ready;
+
+          const clone = idcard.cloneNode(true);
+          clone.removeAttribute('id');
+          clone.classList.remove('loading', 'issued');
+          clone.querySelectorAll('.glare, .scanline').forEach((n) => n.remove());
+          clone.style.transform = 'none';
+          clone.style.boxShadow = '0 40px 90px rgba(0,0,0,.55)';
+
+          const stage = document.createElement('div');
+          stage.style.cssText =
+            'position:fixed;left:-10000px;top:0;width:860px;padding:64px 90px 46px;' +
+            'background:linear-gradient(168deg,#0A1445 0%,#011056 48%,#04060D 100%);' +
+            'display:flex;flex-direction:column;align-items:center;';
+
+          const cap = document.createElement('div');
+          cap.textContent = 'GITHUB · EMPLOYEE IDENTIFICATION';
+          cap.style.cssText = "font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.34em;color:rgba(255,255,255,.55);margin-bottom:30px;";
+
+          const glowWrap = document.createElement('div');
+          glowWrap.style.cssText = 'position:relative;';
+          const glow = document.createElement('div');
+          glow.style.cssText =
+            'position:absolute;left:50%;top:50%;width:760px;height:560px;transform:translate(-50%,-50%);' +
+            'background:radial-gradient(closest-side,rgba(24,62,235,.5),rgba(24,62,235,0));';
+          clone.style.position = 'relative';
+          glowWrap.appendChild(glow);
+          glowWrap.appendChild(clone);
+
+          const credit = document.createElement('div');
+          credit.style.cssText = "font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.12em;color:rgba(255,255,255,.45);margin-top:34px;text-align:center;line-height:1.9;";
+          credit.innerHTML = 'MADE BY <span style="color:rgba(255,255,255,.75)">@ANN_NNNG</span> & TYPINGMIND · FAN CONCEPT — NOT AFFILIATED WITH GITHUB, INC.';
+
+          stage.appendChild(cap); stage.appendChild(glowWrap); stage.appendChild(credit);
+          document.body.appendChild(stage);
+          await new Promise((r) => setTimeout(r, 120));
+
+          const canvas = await html2canvas(stage, { scale: 2, useCORS: true, backgroundColor: null, logging: false });
+          stage.remove();
+
+          const a = document.createElement('a');
+          const who = usernameInput.value.trim().replace(/^@/, '') || 'card';
+          a.download = `github-employee-card-${who}.png`;
+          a.href = canvas.toDataURL('image/png');
+          a.click();
+          toast('Card exported — check your downloads.', 'ok');
+        } catch (e) {
+          console.error(e);
+          toast('Export failed — please try again.', 'error');
+        } finally {
+          busyDownload = false;
+          downloadBtn.disabled = false; generateBtn.disabled = false;
+          dlLabel.textContent = 'Download PNG · 2×';
+        }
+      }
+
+      /* ================= 3D tilt + glare ================= */
+      if (matchMedia('(hover:hover) and (pointer:fine)').matches) {
+        const scene = $('cardScene');
+        scene.addEventListener('mousemove', (e) => {
+          const r = scene.getBoundingClientRect();
+          const px = (e.clientX - r.left) / r.width;
+          const py = (e.clientY - r.top) / r.height;
+          card3d.style.transform = `rotateY(${((px - .5) * 9).toFixed(2)}deg) rotateX(${((.5 - py) * 7).toFixed(2)}deg)`;
+          idcard.style.setProperty('--gx', (px * 100).toFixed(1) + '%');
+          idcard.style.setProperty('--gy', (py * 100).toFixed(1) + '%');
+        });
+        scene.addEventListener('mouseleave', () => { card3d.style.transform = 'rotateY(0) rotateX(0)'; });
+      }
+
+      /* ================= Responsive card scaling ================= */
+      const CARD_W = 680, CARD_H = 430;
+      function fitCard() {
+        const fit = $('stageFit'), scaler = $('scaler');
+        const s = Math.min(1, fit.clientWidth / CARD_W);
+        scaler.style.transform = `scale(${s})`;
+        fit.style.height = (CARD_H + 76) * s + 'px';
+      }
+      window.addEventListener('resize', fitCard);
+
+      /* ================= Events & init ================= */
+      generateBtn.addEventListener('click', () => issueCard());
+      downloadBtn.addEventListener('click', downloadCard);
+      usernameInput.addEventListener('keypress', (e) => e.key === 'Enter' && issueCard());
+
+      $('headSeries').textContent = `SERIES ${new Date().getFullYear()} · SAN FRANCISCO, CA`;
+      renderDots(0);
+      setBarcode('0000-00000');
+      renderChart(dummyDays());
+      fitCard();
+
+      // Deep link support: ?u=username
+      const initial = (new URLSearchParams(location.search).get('u') || '').trim();
+      if (initial) {
+        usernameInput.value = initial;
+        issueCard(initial);
+      } else {
+        // Quietly preview a demo identity so the card arrives fully dressed
+        (async () => {
+          try {
+            const r = await fetch(GH_API + 'octocat');
+            if (!r.ok) return;
+            const u = await r.json();
+            if (userActed) return;
+            const c = await fetchContributions('octocat');
+            if (!userActed) populate(u, c);
+          } catch (_) {}
+        })();
+      }
+    </script>
+  </body>
+</html>

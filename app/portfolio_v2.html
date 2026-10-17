@@ -1,1 +1,727 @@
-portfolio.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Abdullah | Software Engineer & Full-Stack Developer</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  
+  <!-- Google Fonts: Inter & Space Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    /* Theme Colors */
+    :root {
+      --primary-blue: #183eeb;
+      --bg-white: #fdfdfd;
+      --bg-offwhite: #f8f9fa;
+      --text-dark: #111111;
+      --text-gray: #555555;
+      --border-light: #e5e7eb;
+      
+      /* Toggle Colors */
+      --toggle-bg: #f3f4f6;
+      --toggle-active: #1f2937; 
+    }
+
+    /* Base Reset & Typography */
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background-color: var(--bg-white);
+      color: var(--text-dark);
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    /* Custom Selection */
+    ::selection {
+      background-color: var(--primary-blue);
+      color: var(--bg-white);
+    }
+
+    /* Layout: Fixed Sidebar & Scrollable Main */
+    @media (min-width: 1024px) {
+      .sidebar-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 340px;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        z-index: 50;
+        /* background-color: var(--bg-white); */
+        background-color: #ffffff;
+        border-right: 1px solid var(--border-light);
+      }
+      .main-container {
+        margin-left: 340px;
+        width: calc(100% - 340px);
+        height: 100vh;
+        overflow-y: auto;
+        background-color: var(--bg-offwhite);
+      }
+    }
+
+    /* Custom Scrollbar for Main Content */
+    .main-container::-webkit-scrollbar {
+      width: 6px;
+    }
+    .main-container::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .main-container::-webkit-scrollbar-thumb {
+      background: #d1d5db;
+      border-radius: 4px;
+    }
+    .main-container::-webkit-scrollbar-thumb:hover {
+      background: var(--primary-blue);
+    }
+
+    /* Hide Scrollbar for Sidebar Inner Content */
+    .scrollable-content::-webkit-scrollbar {
+      display: none;
+    }
+    .scrollable-content {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Subtle Link Hover Underline */
+    .hover-underline {
+      position: relative;
+      display: inline-block;
+    }
+    .hover-underline::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      transform: scaleX(0);
+      height: 1px;
+      bottom: -2px;
+      left: 0;
+      background-color: currentColor;
+      transform-origin: bottom right;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .hover-underline:hover::after {
+      transform: scaleX(1);
+      transform-origin: bottom left;
+    }
+
+    /* Profile Avatar Specific Styles */
+    .profile-avatar {
+      position: relative;
+      display: inline-block;
+      width: 76px;
+      height: 76px;
+      padding: 0;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      outline: none;
+      flex-shrink: 0;
+    }
+    .profile-avatar__inner {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      background-color: #f3f4f6;
+      border: 1px solid var(--border-light);
+    }
+    .profile-avatar__photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+    .profile-avatar-frame {
+      position: absolute;
+      inset: -4px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    .profile-avatar:hover .profile-avatar-frame {
+      opacity: 1;
+    }
+    .profile-avatar-frame__drawing {
+      position: absolute;
+      inset: 0;
+    }
+    .profile-avatar-frame__line {
+      position: absolute;
+      background-color: var(--primary-blue);
+    }
+    .profile-avatar-frame__line--top { top: 0; left: 0; right: 0; height: 1px; }
+    .profile-avatar-frame__line--bottom { bottom: 0; left: 0; right: 0; height: 1px; }
+    .profile-avatar-frame__line--left { top: 0; left: 0; bottom: 0; width: 1px; }
+    .profile-avatar-frame__line--right { top: 0; right: 0; bottom: 0; width: 1px; }
+    .profile-avatar-frame__corner {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background-color: var(--primary-blue);
+      border: 1px solid #ffffff;
+    }
+    .profile-avatar-frame__corner--top-left { top: -3px; left: -3px; }
+    .profile-avatar-frame__corner--top-right { top: -3px; right: -3px; }
+    .profile-avatar-frame__corner--bottom-left { bottom: -3px; left: -3px; }
+    .profile-avatar-frame__corner--bottom-right { bottom: -3px; right: -3px; }
+    .profile-avatar-hover-label {
+      position: absolute;
+      top: -24px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--primary-blue);
+      font-size: 12px;
+      font-weight: 600;
+      font-family: 'Space Mono', monospace;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+    .profile-avatar:hover .profile-avatar-hover-label {
+      opacity: 1;
+    }
+    .profile-avatar-size-pill {
+      position: absolute;
+      bottom: -28px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: var(--primary-blue);
+      color: #ffffff;
+      font-size: 10px;
+      font-weight: 600;
+      font-family: 'Space Mono', monospace;
+      padding: 2px 8px;
+      border-radius: 10px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .profile-avatar:hover .profile-avatar-size-pill {
+      opacity: 1;
+    }
+
+    /* Toggle Switch Styles */
+    .toggle-container {
+      display: inline-flex;
+      background-color: var(--bg-offwhite);
+      border: 1px solid var(--border-light);
+      border-radius: 50px;
+      padding: 4px;
+      height: 45px;
+      position: relative;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);
+    }
+    .toggle-btn {
+      position: relative;
+      z-index: 10;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #6b7280;
+      border-radius: 50px;
+      transition: color 0.3s ease;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+    }
+    .toggle-btn.active {
+      color: #ffffff;
+    }
+    .toggle-slider {
+      position: absolute;
+      top: 4px;
+      bottom: 4px;
+      left: 4px;
+      width: calc(50% - 4px);
+      background-color: var(--toggle-active);
+      border-radius: 50px;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* UI Utilities */
+    .btn-primary {
+      background-color: var(--primary-blue);
+      color: #ffffff;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(24, 62, 235, 0.2);
+    }
+    .btn-primary:hover {
+      background-color: #0f2bb5;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(24, 62, 235, 0.3);
+    }
+    .btn-outline {
+      border: 1px solid var(--border-light);
+      color: var(--text-dark);
+      background-color: #ffffff;
+      transition: all 0.3s ease;
+    }
+    .btn-outline:hover {
+      background-color: var(--bg-offwhite);
+      border-color: #d1d5db;
+    }
+    .text-primary { color: var(--primary-blue); }
+    .bg-primary { background-color: var(--primary-blue); }
+    .border-primary { border-color: var(--primary-blue); }
+    
+    /* Form Inputs */
+    .form-input {
+      background-color: var(--bg-white);
+      border: 1px solid var(--border-light);
+      color: var(--text-dark);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary-blue);
+      box-shadow: 0 0 0 3px rgba(24, 62, 235, 0.1);
+    }
+
+    /* Grid Background for Main Area */
+    .bg-grid-pattern {
+      background-image: linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== LEFT SIDEBAR ==================== -->
+  <aside class="sidebar-container w-full lg:w-[340px] flex flex-col justify-between px-6 py-8">
+    
+    <!-- Top Section: Profile Info -->
+    <div class="flex-shrink-0">
+      
+      <!-- Avatar and Toggle Wrapper -->
+      <div class="flex justify-between mb-8 items-start">
+        <!-- Avatar with Hover Effects -->
+        <button class="profile-avatar" aria-label="Profile Avatar">
+          <span class="profile-avatar-hover-label">img</span>
+          <span class="profile-avatar-size-pill">76 × 76</span>
+          
+          <span class="profile-avatar-frame">
+            <span class="profile-avatar-frame__drawing">
+              <span class="profile-avatar-frame__line profile-avatar-frame__line--top"></span>
+              <span class="profile-avatar-frame__line profile-avatar-frame__line--right"></span>
+              <span class="profile-avatar-frame__line profile-avatar-frame__line--bottom"></span>
+              <span class="profile-avatar-frame__line profile-avatar-frame__line--left"></span>
+              <span class="profile-avatar-frame__corner profile-avatar-frame__corner--top-left"></span>
+              <span class="profile-avatar-frame__corner profile-avatar-frame__corner--top-right"></span>
+              <span class="profile-avatar-frame__corner profile-avatar-frame__corner--bottom-left"></span>
+              <span class="profile-avatar-frame__corner profile-avatar-frame__corner--bottom-right"></span>
+            </span>
+          </span>
+          
+          <span class="profile-avatar__inner">
+            <span class="profile-avatar__photo block w-full h-full">
+              <img src="https://github.com/abdullah2309/abdullah-dev/blob/main/app/abdullah-app/images/me.png?raw=true" alt="Abdullah" draggable="false">
+            </span>
+          </span>
+        </button>
+
+        <!-- Work / Play Toggle -->
+        <div class="toggle-container mt-2" id="modeToggle">
+          <div class="toggle-slider" id="toggleSlider"></div>
+          <button class="toggle-btn active" onclick="switchMode('work')">Work</button>
+          <button class="toggle-btn" onclick="switchMode('play')">Play</button>
+        </div>
+      </div>
+
+      <!-- Scrollable Text Content -->
+      <div class="scrollable-content overflow-y-auto" style="max-height: 420px;">
+        <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Abdullah</h1>
+        <p class="text-gray-500 text-sm mt-1 font-medium">Software Engineer</p>
+
+        <p class="text-gray-600 text-sm mt-6 leading-relaxed">
+          Software Engineering candidate at Aptech Computer Education. Crafting secure, scalable enterprise systems, modern web platforms, and fluid cross-platform mobile apps.
+        </p>
+
+        <!-- Status -->
+        <div class="mt-8">
+          <p class="text-gray-400 text-xs font-semibold uppercase tracking-widest mb-3">Now</p>
+          <ul class="space-y-2 text-sm text-gray-700">
+            <li class="flex items-start gap-2">
+              <span class="text-primary mt-0.5">→</span>
+              <span>Software Engineering Candidate at <a href="#" class="hover-underline text-black font-medium">Aptech</a></span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-primary mt-0.5">→</span>
+              <span>Full-Stack Developer <a href="#" class="hover-underline text-black font-medium">.NET & Laravel</a></span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Contact -->
+        <div class="mt-8">
+          <p class="text-gray-400 text-xs font-semibold uppercase tracking-widest mb-2">Connect</p>
+          <div class="flex flex-col gap-2 text-sm text-gray-700">
+            <a href="mailto:abdullah2309r@gmail.com" class="hover-underline hover:text-black transition-colors flex items-center gap-2">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              abdullah2309r@gmail.com
+            </a>
+            <a href="tel:+923132586938" class="hover-underline hover:text-black transition-colors flex items-center gap-2">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              +92 313 2586938
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="mt-8 pt-6 border-t border-gray-200">
+      <ul class="space-y-3 text-[15px] font-medium text-gray-500">
+        <li><a href="#hero" class="hover-underline hover:text-black transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 bg-primary rounded-full inline-block"></span> Home</a></li>
+        <li><a href="#work" class="hover-underline hover:text-black transition-colors">Selected Work</a></li>
+        <li><a href="#about" class="hover-underline hover:text-black transition-colors">About & Academics</a></li>
+        <li><a href="#services" class="hover-underline hover:text-black transition-colors">Services</a></li>
+        <li><a href="#contact" class="hover-underline hover:text-black transition-colors">Contact</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- ==================== RIGHT SIDE (MAIN CONTENT) ==================== -->
+  <main class="main-container bg-grid-pattern relative">
+    
+    <!-- ========================================== -->
+    <!-- WORK MODE CONTENT (Default)                -->
+    <!-- ========================================== -->
+    <div id="content-work" class="block">
+      
+      <!-- Hero Section -->
+      <section id="hero" class="min-h-screen flex flex-col justify-center px-6 py-20 lg:px-16 border-b border-gray-200 bg-white/50 backdrop-blur-sm">
+        <div class="max-w-4xl">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-blue-200 bg-blue-50 text-xs font-semibold text-primary mb-8 uppercase tracking-wider">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+            </span>
+            Available for work
+          </div>
+          
+          <h1 class="text-4xl md:text-6xl font-bold text-gray-900 leading-[1.1] tracking-tight mb-6">
+            Building Secure & Scalable <br>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-500">Web & Mobile Solutions</span>
+          </h1>
+          
+          <p class="text-lg text-gray-600 leading-relaxed max-w-2xl mb-10">
+            Software Engineering candidate at Aptech. Architecting robust enterprise systems with .NET, scalable Laravel & React web platforms, and responsive Flutter cross-platform applications.
+          </p>
+
+          <div class="flex flex-wrap items-center gap-4">
+            <a href="#contact" class="btn-primary px-6 py-3 rounded-lg font-medium text-sm flex items-center gap-2">
+              Schedule a Call
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+            <button class="btn-outline px-6 py-3 rounded-lg font-medium text-sm flex items-center gap-2">
+              Copy Email
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            </button>
+            <a href="#work" class="text-gray-500 hover:text-black transition-colors text-sm font-medium underline underline-offset-4 decoration-gray-300 hover:decoration-black">
+              See Selected Work
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Selected Work Section -->
+      <section id="work" class="px-6 py-20 lg:px-16 border-b border-gray-200 bg-white/80 backdrop-blur-sm">
+        <div class="max-w-5xl mx-auto">
+          <div class="flex items-end justify-between mb-12">
+            <div>
+              <p class="text-primary font-mono text-sm tracking-wider mb-2">02 — SELECTED WORK</p>
+              <h2 class="text-3xl font-bold text-gray-900">Projects & Case Studies</h2>
+            </div>
+            <div class="text-gray-500 text-sm font-mono">
+              <span class="text-black font-bold text-xl">11+</span> Projects
+            </div>
+          </div>
+
+          <!-- Filter Tags (Static) -->
+          <div class="flex flex-wrap items-center gap-3 mb-10">
+            <button class="px-4 py-1.5 rounded-full text-xs font-medium bg-primary text-white shadow-sm">All <span class="ml-1 text-blue-200">11</span></button>
+            <button class="px-4 py-1.5 rounded-full text-xs font-medium border border-gray-300 text-gray-600 hover:text-black hover:border-gray-400 transition-colors bg-white">.NET <span class="ml-1 opacity-50">03</span></button>
+            <button class="px-4 py-1.5 rounded-full text-xs font-medium border border-gray-300 text-gray-600 hover:text-black hover:border-gray-400 transition-colors bg-white">Laravel <span class="ml-1 opacity-50">06</span></button>
+          </div>
+
+          <!-- Projects Grid Placeholder -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Project Card 1 -->
+            <div class="group relative rounded-xl overflow-hidden bg-white border border-gray-200 hover:border-primary/40 shadow-sm hover:shadow-md transition-all">
+              <div class="aspect-video w-full bg-gray-100 relative overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1000&auto=format&fit=crop" alt=".NET Project" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500">
+                <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded text-xs font-mono text-black border border-gray-200 shadow-sm">.NET</div>
+              </div>
+              <div class="p-5">
+                <h3 class="text-gray-900 font-semibold text-lg mb-1 group-hover:text-primary transition-colors">Enterprise Resource Planner</h3>
+                <p class="text-gray-500 text-sm">Clean Architecture, CQRS, SQL Server</p>
+              </div>
+            </div>
+            <!-- Project Card 2 -->
+            <div class="group relative rounded-xl overflow-hidden bg-white border border-gray-200 hover:border-primary/40 shadow-sm hover:shadow-md transition-all">
+              <div class="aspect-video w-full bg-gray-100 relative overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1000&auto=format&fit=crop" alt="Laravel Project" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500">
+                <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded text-xs font-mono text-black border border-gray-200 shadow-sm">Laravel</div>
+              </div>
+              <div class="p-5">
+                <h3 class="text-gray-900 font-semibold text-lg mb-1 group-hover:text-primary transition-colors">Multi-Tenant SaaS Platform</h3>
+                <p class="text-gray-500 text-sm">Laravel 11, React, Tailwind CSS</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- About & Academics Section -->
+      <section id="about" class="px-6 py-20 lg:px-16 border-b border-gray-200 bg-white/80 backdrop-blur-sm">
+        <div class="max-w-5xl mx-auto">
+          <div class="mb-12">
+            <p class="text-primary font-mono text-sm tracking-wider mb-2">ABOUT & ACADEMICS</p>
+            <h2 class="text-3xl font-bold text-gray-900 mb-3">Software Engineering with Precision & Depth</h2>
+            <p class="text-gray-500 text-sm">Aptech Rigor • Enterprise .NET • Modern Web & Mobile</p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <!-- Left: Background -->
+            <div>
+              <h3 class="text-xl font-semibold text-gray-900 mb-4">Background & Approach</h3>
+              <p class="text-gray-600 leading-relaxed mb-4 text-sm">
+                As a software engineering student at Aptech Computer Education, I approach digital development with an architectural foundation in Object-Oriented Programming, Data Structures, and disciplined Clean Architecture principles.
+              </p>
+              <p class="text-gray-600 leading-relaxed mb-6 text-sm">
+                Rather than treating web and mobile as disjointed silos, I connect the entire development pipeline: building high-throughput .NET Web APIs and SQL Server architectures, deploying scalable Laravel platforms, and delivering fluid, natively compiled cross-platform client experiences with Flutter.
+              </p>
+              
+              <ul class="space-y-2 mt-6">
+                <li class="flex items-center gap-2 text-sm text-gray-700"><span class="text-primary">✓</span> Clean Architecture & CQRS</li>
+                <li class="flex items-center gap-2 text-sm text-gray-700"><span class="text-primary">✓</span> Cross-Platform Flutter Mobile</li>
+                <li class="flex items-center gap-2 text-sm text-gray-700"><span class="text-primary">✓</span> Relational & NoSQL Modeling</li>
+                <li class="flex items-center gap-2 text-sm text-gray-700"><span class="text-primary">✓</span> Scalable Laravel Web Backends</li>
+              </ul>
+            </div>
+
+            <!-- Right: Education -->
+            <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+              <div class="flex items-start justify-between mb-4">
+                <div>
+                  <h4 class="text-lg font-bold text-gray-900">ACCP Advanced Diploma</h4>
+                  <p class="text-primary text-sm font-medium mt-1">Active Candidate</p>
+                </div>
+                <span class="bg-blue-50 text-primary text-xs px-2.5 py-1 rounded-full font-mono border border-blue-100">Education</span>
+              </div>
+              <p class="text-gray-900 font-medium text-sm mb-1">Aptech Computer Education</p>
+              <p class="text-gray-500 text-xs mb-4">Advanced Software Engineering (ACCP) • Karachi, Pakistan</p>
+              <p class="text-gray-600 text-sm mb-6 leading-relaxed">
+                Comprehensive software engineering curriculum emphasizing Object-Oriented Programming, Data Structures, Relational Database Modeling, and enterprise software engineering practices.
+              </p>
+              
+              <h5 class="text-gray-900 text-xs font-semibold uppercase tracking-wider mb-3">Academic Coursework & Modules:</h5>
+              <ul class="space-y-2 text-xs text-gray-600">
+                <li class="flex items-start gap-2"><span class="text-primary mt-0.5">•</span> Object-Oriented Programming (C# / Java)</li>
+                <li class="flex items-start gap-2"><span class="text-primary mt-0.5">•</span> Database Management Systems (SQL Server, MySQL)</li>
+                <li class="flex items-start gap-2"><span class="text-primary mt-0.5">•</span> Enterprise Application Development (.NET Core)</li>
+                <li class="flex items-start gap-2"><span class="text-primary mt-0.5">•</span> Web Development & Frameworks (Laravel, PHP)</li>
+                <li class="flex items-start gap-2"><span class="text-primary mt-0.5">•</span> Cross-Platform Mobile App Dev (Flutter)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Stack Breakdown Section -->
+      <section class="px-6 py-20 lg:px-16 border-b border-gray-200 bg-white/80 backdrop-blur-sm">
+        <div class="max-w-5xl mx-auto">
+          <p class="text-primary font-mono text-sm tracking-wider mb-2">STACK BREAKDOWN</p>
+          <h2 class="text-3xl font-bold text-gray-900 mb-10">Core Stack & Technologies</h2>
+
+          <div class="mb-8">
+            <div class="flex items-center gap-4 mb-6">
+              <span class="text-gray-400 font-mono text-sm">Section 01</span>
+              <h3 class="text-xl font-semibold text-gray-900">.NET & Enterprise Backends</h3>
+            </div>
+            <p class="text-gray-600 text-sm mb-6 max-w-2xl">
+              High-throughput backend solutions, modular ASP.NET Core Web APIs, and maintainable domain architectures with C# and Entity Framework Core.
+            </p>
+            <div class="flex flex-wrap gap-2">
+              <span class="px-3 py-1.5 bg-white border border-gray-200 shadow-sm rounded-lg text-sm text-gray-700">C# / .NET</span>
+              <span class="px-3 py-1.5 bg-white border border-gray-200 shadow-sm rounded-lg text-sm text-gray-700">ASP.NET Core Web API</span>
+              <span class="px-3 py-1.5 bg-white border border-gray-200 shadow-sm rounded-lg text-sm text-gray-700">Clean Architecture & CQRS</span>
+              <span class="px-3 py-1.5 bg-white border border-gray-200 shadow-sm rounded-lg text-sm text-gray-700">Entity Framework Core</span>
+              <span class="px-3 py-1.5 bg-white border border-gray-200 shadow-sm rounded-lg text-sm text-gray-700">SQL Server & Database Design</span>
+              <span class="px-3 py-1.5 bg-white border border-gray-200 shadow-sm rounded-lg text-sm text-gray-700">JWT Authentication & RBAC</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Contact Section -->
+      <section id="contact" class="px-6 py-20 lg:px-16 border-b border-gray-200 bg-white/80 backdrop-blur-sm">
+        <div class="max-w-5xl mx-auto">
+          <div class="mb-12">
+            <p class="text-primary font-mono text-sm tracking-wider mb-2">CONNECT & COLLABORATE</p>
+            <h2 class="text-3xl font-bold text-gray-900 mb-3">Ready to Build Something Secure & Scalable?</h2>
+            <p class="text-gray-600 text-sm max-w-2xl">
+              Schedule a technical consultation or send a message directly to Abdullah. Available for .NET enterprise systems, Laravel platforms, and Flutter mobile apps.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <!-- Left: Form -->
+            <div class="bg-white border border-gray-200 rounded-xl p-6 md:p-8 shadow-sm">
+              <h3 class="text-lg font-semibold text-gray-900 mb-6">Send a Message</h3>
+              <form class="space-y-4">
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">Your Name *</label>
+                  <input type="text" placeholder="e.g. Sarah Jenkins" class="form-input w-full rounded-lg px-4 py-2.5 text-sm">
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">Email Address *</label>
+                  <input type="email" placeholder="e.g. sarah@company.com" class="form-input w-full rounded-lg px-4 py-2.5 text-sm">
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1">Discussion Scope</label>
+                  <select class="form-input w-full rounded-lg px-4 py-2.5 text-sm">
+                    <option>.NET Enterprise Architecture & APIs</option>
+                    <option>Laravel / React Web Platform</option>
+                    <option>Flutter Cross-Platform App</option>
+                  </select>
+                </div>
+                <button type="button" class="w-full btn-primary py-3 rounded-lg font-medium text-sm mt-2 flex items-center justify-center gap-2">
+                  Confirm Call Request
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+                </button>
+              </form>
+            </div>
+
+            <!-- Right: Direct Info -->
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900 mb-6">Direct Communication</h3>
+              <div class="space-y-4">
+                <a href="mailto:abdullah2309r@gmail.com" class="flex items-center gap-4 p-4 rounded-xl border border-gray-200 hover:border-primary/50 bg-white shadow-sm transition-colors group">
+                  <div class="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 group-hover:text-primary transition-colors">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                  </div>
+                  <div>
+                    <p class="text-xs text-gray-500">Direct Email</p>
+                    <p class="text-sm font-medium text-gray-900">abdullah2309r@gmail.com</p>
+                  </div>
+                </a>
+                <div class="flex gap-4">
+                  <a href="#" class="flex-1 flex items-center justify-center gap-2 p-3 rounded-lg border border-gray-200 hover:border-gray-300 bg-white shadow-sm text-sm text-gray-700 font-medium transition-colors">GitHub</a>
+                  <a href="#" class="flex-1 flex items-center justify-center gap-2 p-3 rounded-lg border border-gray-200 hover:border-gray-300 bg-white shadow-sm text-sm text-gray-700 font-medium transition-colors">LinkedIn</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="px-6 py-12 lg:px-16 bg-white border-t border-gray-200">
+        <div class="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+          <div>
+            <h2 class="text-2xl font-bold text-gray-900">Abdullah</h2>
+            <p class="text-gray-500 text-sm mt-1">/ Software Engineer</p>
+          </div>
+          <div class="text-xs text-gray-400">
+            <p>© 2024 Abdullah. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
+
+    </div> <!-- End Work Mode Content -->
+
+    <!-- ========================================== -->
+    <!-- PLAY MODE CONTENT (Hidden by Default)      -->
+    <!-- ========================================== -->
+    <div id="content-play" class="hidden min-h-screen flex flex-col items-center justify-center p-6 text-center bg-white/80 backdrop-blur-sm">
+      <div class="max-w-2xl w-full">
+        <!-- Retro Game Theme Card -->
+        <div class="bg-white border-2 border-primary/20 rounded-2xl p-8 md:p-12 shadow-xl relative overflow-hidden">
+          
+          <!-- Subtle Scanline Effect overlay for white theme -->
+          <div class="absolute inset-0 pointer-events-none opacity-5 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px]"></div>
+
+          <h2 class="text-4xl md:text-5xl font-mono font-bold text-primary mb-4 tracking-tighter">
+            PLAY_ZONE
+          </h2>
+          <p class="text-gray-500 font-mono mb-8 text-sm">// System ready. Insert coin to continue.</p>
+          
+          <!-- Game Grid Placeholder -->
+          <div class="grid grid-cols-2 gap-4 mb-8">
+            <div class="border border-gray-200 bg-gray-50 p-4 rounded-lg flex flex-col items-center hover:border-primary/50 hover:bg-white transition-colors cursor-pointer group shadow-sm">
+              <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-blue-200 transition-colors">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-primary"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              </div>
+              <span class="text-gray-900 font-mono text-sm font-medium">Snake.exe</span>
+            </div>
+            <div class="border border-gray-200 bg-gray-50 p-4 rounded-lg flex flex-col items-center hover:border-primary/50 hover:bg-white transition-colors cursor-pointer group shadow-sm">
+              <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-blue-200 transition-colors">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-primary"><rect x="2" y="6" width="20" height="12" rx="2" ry="2"/><path d="M6 12h4M8 10v4M15 13h.01M18 11h.01"/></svg>
+              </div>
+              <span class="text-gray-900 font-mono text-sm font-medium">Pong.exe</span>
+            </div>
+          </div>
+
+          <button class="btn-outline px-6 py-3 rounded-lg font-mono text-sm inline-flex items-center gap-2 border-primary/30 text-primary hover:bg-blue-50">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg>
+            Start Game
+          </button>
+        </div>
+      </div>
+    </div> <!-- End Play Mode Content -->
+
+  </main>
+
+  <!-- ==================== JAVASCRIPT ==================== -->
+  <script>
+    // Toggle Logic
+    function switchMode(mode) {
+      const workContent = document.getElementById('content-work');
+      const playContent = document.getElementById('content-play');
+      const slider = document.getElementById('toggleSlider');
+      const btns = document.querySelectorAll('.toggle-btn');
+      
+      // Update Buttons
+      btns.forEach(btn => btn.classList.remove('active'));
+      
+      if (mode === 'work') {
+        btns[0].classList.add('active');
+        slider.style.transform = 'translateX(0)';
+        
+        // Show Work, Hide Play
+        workContent.classList.remove('hidden');
+        workContent.classList.add('block');
+        playContent.classList.add('hidden');
+        playContent.classList.remove('block');
+      } else {
+        btns[1].classList.add('active');
+        slider.style.transform = 'translateX(100%)';
+        
+        // Show Play, Hide Work
+        workContent.classList.add('hidden');
+        workContent.classList.remove('block');
+        playContent.classList.remove('hidden');
+        playContent.classList.add('block');
+      }
+    }
+  </script>
+
+</body>
+</html>

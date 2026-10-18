@@ -1,0 +1,1352 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Abdullah | Software Developer & Full-Stack Developer</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="./assets/css/main.css" />
+
+    <!-- Google Fonts: Inter & Space Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+      /* Theme Colors */
+      :root {
+        --primary-blue: #183eeb;
+        --bg-white: #fdfdfd;
+        --bg-offwhite: #f8f9fa;
+        --text-dark: #111111;
+        --text-gray: #555555;
+        --border-light: #e5e7eb;
+
+        /* Toggle Colors */
+        --toggle-bg: #f3f4f6;
+        --toggle-active: #1f2937;
+      }
+
+      /* Base Reset & Typography */
+      body {
+        font-family: "Inter", system-ui, sans-serif;
+        background-color: var(--bg-white);
+        color: var(--text-dark);
+        overflow: hidden;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* Custom Selection */
+      ::selection {
+        background-color: var(--primary-blue);
+        color: var(--bg-white);
+      }
+
+      /* Layout: Fixed Sidebar & Scrollable Main */
+      @media (min-width: 1024px) {
+        .sidebar-container {
+          position: fixed;
+          top: 0;
+          left: 0;
+          bottom: 0;
+          width: 380px;
+          height: 100vh;
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+          z-index: 50;
+          /* background-color: var(--bg-white); */
+          background-color: #ffffff;
+          border-right: 1px solid var(--border-light);
+        }
+        .main-container {
+          margin-left: 340px;
+          width: calc(100% - 340px);
+          height: 100vh;
+          overflow-y: auto;
+          background-color: var(--bg-offwhite);
+        }
+      }
+
+      /* Custom Scrollbar for Main Content */
+      .main-container::-webkit-scrollbar {
+        width: 6px;
+      }
+      .main-container::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .main-container::-webkit-scrollbar-thumb {
+        background: #d1d5db;
+        border-radius: 4px;
+      }
+      .main-container::-webkit-scrollbar-thumb:hover {
+        background: var(--primary-blue);
+      }
+
+      /* Hide Scrollbar for Sidebar Inner Content */
+      .scrollable-content::-webkit-scrollbar {
+        display: none;
+      }
+      .scrollable-content {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+
+      /* Subtle Link Hover Underline */
+      .hover-underline {
+        position: relative;
+        display: inline-block;
+      }
+      .hover-underline::after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        transform: scaleX(0);
+        height: 1px;
+        bottom: -2px;
+        left: 0;
+        background-color: currentColor;
+        transform-origin: bottom right;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .hover-underline:hover::after {
+        transform: scaleX(1);
+        transform-origin: bottom left;
+      }
+
+      /* Profile Avatar Specific Styles */
+      .profile-avatar {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 50px;
+        /* width: 76px;
+      height: 76px; */
+        padding: 0;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        outline: none;
+        flex-shrink: 0;
+      }
+      .profile-avatar__inner {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border-radius: 8px;
+        overflow: hidden;
+        background-color: #f3f4f6;
+        border: 1px solid var(--border-light);
+      }
+      .profile-avatar__photo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+      }
+      .profile-avatar-frame {
+        position: absolute;
+        inset: -4px;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+      }
+      .profile-avatar:hover .profile-avatar-frame {
+        opacity: 1;
+      }
+      .profile-avatar-frame__drawing {
+        position: absolute;
+        inset: 0;
+      }
+      .profile-avatar-frame__line {
+        position: absolute;
+        background-color: var(--primary-blue);
+      }
+      .profile-avatar-frame__line--top {
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+      }
+      .profile-avatar-frame__line--bottom {
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+      }
+      .profile-avatar-frame__line--left {
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 1px;
+      }
+      .profile-avatar-frame__line--right {
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 1px;
+      }
+      .profile-avatar-frame__corner {
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        background-color: var(--primary-blue);
+        border: 1px solid #ffffff;
+      }
+      .profile-avatar-frame__corner--top-left {
+        top: -3px;
+        left: -3px;
+      }
+      .profile-avatar-frame__corner--top-right {
+        top: -3px;
+        right: -3px;
+      }
+      .profile-avatar-frame__corner--bottom-left {
+        bottom: -3px;
+        left: -3px;
+      }
+      .profile-avatar-frame__corner--bottom-right {
+        bottom: -3px;
+        right: -3px;
+      }
+      .profile-avatar-hover-label {
+        position: absolute;
+        top: -24px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: var(--primary-blue);
+        font-size: 12px;
+        font-weight: 600;
+        font-family: "Space Mono", monospace;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        pointer-events: none;
+      }
+      .profile-avatar:hover .profile-avatar-hover-label {
+        opacity: 1;
+      }
+      .profile-avatar-size-pill {
+        position: absolute;
+        bottom: -28px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: var(--primary-blue);
+        color: #ffffff;
+        font-size: 10px;
+        font-weight: 600;
+        font-family: "Space Mono", monospace;
+        padding: 2px 8px;
+        border-radius: 10px;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        pointer-events: none;
+        white-space: nowrap;
+      }
+      .profile-avatar:hover .profile-avatar-size-pill {
+        opacity: 1;
+      }
+
+      /* Toggle Switch Styles */
+      .toggle-container {
+        display: inline-flex;
+        background-color: var(--bg-offwhite);
+        border: 1px solid var(--border-light);
+        border-radius: 50px;
+        padding: 4px;
+        height: 35px;
+        position: relative;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.02);
+      }
+      .toggle-btn {
+        position: relative;
+        z-index: 10;
+        padding: 5px 10px;
+        /* padding: 6px 16px; */
+        font-size: 11px;
+        font-weight: 500;
+        color: #6b7280;
+        border-radius: 50px;
+        transition: color 0.3s ease;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+      }
+      .toggle-btn.active {
+        color: #ffffff;
+      }
+      .toggle-slider {
+        position: absolute;
+        top: 4px;
+        bottom: 4px;
+        left: 4px;
+        width: calc(50% - 4px);
+        /* background-color: var(--toggle-active); */
+        background-color: #9fc4fe;
+        border-radius: 50px;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      /* UI Utilities */
+      .btn-primary {
+        background-color: var(--primary-blue);
+        color: #ffffff;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(24, 62, 235, 0.2);
+      }
+      .btn-primary:hover {
+        background-color: #0f2bb5;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(24, 62, 235, 0.3);
+      }
+      .btn-outline {
+        border: 1px solid var(--border-light);
+        color: var(--text-dark);
+        background-color: #ffffff;
+        transition: all 0.3s ease;
+      }
+      .btn-outline:hover {
+        background-color: var(--bg-offwhite);
+        border-color: #d1d5db;
+      }
+      .text-primary {
+        color: var(--primary-blue);
+      }
+      .bg-primary {
+        background-color: var(--primary-blue);
+      }
+      .border-primary {
+        border-color: var(--primary-blue);
+      }
+
+      /* Form Inputs */
+      .form-input {
+        background-color: var(--bg-white);
+        border: 1px solid var(--border-light);
+        color: var(--text-dark);
+        transition:
+          border-color 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      .form-input:focus {
+        outline: none;
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 3px rgba(24, 62, 235, 0.1);
+      }
+
+      /* Grid Background for Main Area */
+      .bg-grid-pattern {
+        background-image:
+          linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+        background-size: 40px 40px;
+      }
+      .my-text {
+        color: #111111;
+        font-size: 13px;
+        letter-spacing: -0.1px;
+        display: inline-flex !important;
+        align-items: center;
+      }
+      .my-text-tilte {
+        font-size: 16px;
+        font-weight: 500;
+        color: #111111;
+        letter-spacing: -0.1px;
+      }
+      .my-text-subtilte {
+        font-size: 13px;
+        font-weight: 400;
+        color: #8e8799;
+        letter-spacing: -0.1px;
+      }
+      /* #8E8799 */
+    </style>
+  </head>
+  <body>
+    <!-- ==================== LEFT SIDEBAR ==================== -->
+    <aside
+      class="sidebar-container w-full lg:w-[340px] flex flex-col justify-between px-6 py-8"
+    >
+      <!-- Top Section: Profile Info -->
+      <div class="flex-shrink-0">
+        <!-- Avatar and Toggle Wrapper -->
+        <div class="flex justify-between mb-8 items-start">
+          <!-- Avatar with Hover Effects -->
+          <button class="profile-avatar" aria-label="Profile Avatar">
+            <span class="profile-avatar-hover-label">img</span>
+            <span class="profile-avatar-size-pill">50 × 50</span>
+
+            <span class="profile-avatar-frame">
+              <span class="profile-avatar-frame__drawing">
+                <span
+                  class="profile-avatar-frame__line profile-avatar-frame__line--top"
+                ></span>
+                <span
+                  class="profile-avatar-frame__line profile-avatar-frame__line--right"
+                ></span>
+                <span
+                  class="profile-avatar-frame__line profile-avatar-frame__line--bottom"
+                ></span>
+                <span
+                  class="profile-avatar-frame__line profile-avatar-frame__line--left"
+                ></span>
+                <span
+                  class="profile-avatar-frame__corner profile-avatar-frame__corner--top-left"
+                ></span>
+                <span
+                  class="profile-avatar-frame__corner profile-avatar-frame__corner--top-right"
+                ></span>
+                <span
+                  class="profile-avatar-frame__corner profile-avatar-frame__corner--bottom-left"
+                ></span>
+                <span
+                  class="profile-avatar-frame__corner profile-avatar-frame__corner--bottom-right"
+                ></span>
+              </span>
+            </span>
+
+            <span class="profile-avatar__inner">
+              <span class="profile-avatar__photo block w-full h-full">
+                <img
+                  src="https://github.com/abdullah2309/abdullah-dev/blob/main/app/abdullah-app/images/me.png?raw=true"
+                  alt="Abdullah"
+                  draggable="false"
+                />
+              </span>
+            </span>
+          </button>
+
+          <!-- Work / Play Toggle -->
+          <div class="toggle-container mt-2" id="modeToggle">
+            <div class="toggle-slider" id="toggleSlider"></div>
+            <button class="toggle-btn active" onclick="switchMode('work')">
+              Work
+            </button>
+            <button class="toggle-btn" onclick="switchMode('play')">
+              Play
+            </button>
+          </div>
+        </div>
+
+        <!-- Scrollable Text Content -->
+        <div
+          class="scrollable-content overflow-y-auto"
+          style="max-height: 420px"
+        >
+          <h1
+            class="text-2xl font-bold text-gray-900 tracking-tight my-text-tilte"
+          >
+            Abdullah Shahid
+          </h1>
+          <p class="text-gray-500 mt-1 my-text-subtilte">Software Developer</p>
+
+          <p class="text-gray-600 text-sm mt-2 leading-relaxed my-text">
+            Software Developer at Aptech Computer Education, building secure web applications, enterprise systems, and cross-platform mobile apps.
+          </p>
+
+          <!-- Contact -->
+          <div class="mt-4">
+
+            <div
+              class="my-contact-links flex flex-row flex-wrap items-center gap-2 text-sm text-gray-700"
+            >
+              <a
+                href="https://www.linkedin.com/in/abdullah-shahid-a61175336/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="my-contact-li"
+              >
+                LinkedIn
+              </a>
+
+              <span class="contact-dot">·</span>
+
+              <a
+                href="https://github.com/abdullah2309/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="my-contact-li"
+              >
+                Github
+              </a>
+
+              <span class="contact-dot">·</span>
+
+              <a
+                href="https://leetcode.com/u/7g1rMdnqLS/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="my-contact-li"
+              >
+                LeetCode
+              </a>
+
+              <span class="contact-dot">·</span>
+              <a
+                href="assets/resume/Abdullah_Resume.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="my-contact-li"
+              >
+                Resume
+              </a>
+
+              <span class="contact-dot">·</span>
+
+              <div class="email-copy-wrapper">
+                <a href="mailto:abdullah2309r@gmail.com" class="my-contact-li">
+                  abdullah2309r@gmail.com
+                </a>
+
+                <button
+                  type="button"
+                  class="copy-email-btn"
+                  onclick="copyEmail(this)"
+                  aria-label="Copy email address"
+                  title="Copy email"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <rect x="8" y="8" width="13" height="13" rx="2"></rect>
+                    <path
+                      d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"
+                    ></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Navigation -->
+      <nav class="mt-8 pt-6 border-t border-gray-200">
+        <ul class="space-y-3 text-[15px] font-medium text-gray-500">
+          <li>
+            <a
+              href="#hero"
+              class="hover-underline hover:text-black transition-colors flex items-center gap-2"
+              ><span
+                class="w-1.5 h-1.5 bg-primary rounded-full inline-block"
+              ></span>
+              Home</a
+            >
+          </li>
+          <li>
+            <a
+              href="#work"
+              class="hover-underline hover:text-black transition-colors"
+              >Selected Work</a
+            >
+          </li>
+          <li>
+            <a
+              href="#about"
+              class="hover-underline hover:text-black transition-colors"
+              >About & Academics</a
+            >
+          </li>
+          <li>
+            <a
+              href="#services"
+              class="hover-underline hover:text-black transition-colors"
+              >Services</a
+            >
+          </li>
+          <li>
+            <a
+              href="#contact"
+              class="hover-underline hover:text-black transition-colors"
+              >Contact</a
+            >
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- ==================== RIGHT SIDE (MAIN CONTENT) ==================== -->
+    <main class="main-container bg-grid-pattern relative">
+      <!-- ========================================== -->
+      <!-- WORK MODE CONTENT (Default)                -->
+      <!-- ========================================== -->
+      <div id="content-work" class="block">
+        <!-- Hero Section -->
+        <section
+          id="hero"
+          class="min-h-screen flex flex-col px-6 py-20 lg:px-30 border-b border-gray-200 bg-[#ffffff] backdrop-blur-sm"
+        >
+          <div class="max-w-4xl">
+            <p class="text-gray-600 text-sm mt-2 leading-relaxed my-text">
+              Hey there, I’m Abdullah
+            </p>
+
+            <br />
+            <a target="_blank" rel="noopener noreferrer" class="my-contact-li">
+              a Software Developer based in Karachi.
+            </a>
+            <br />
+
+            <a target="_blank" rel="noopener noreferrer" class="my-text mt-3">
+             I specialize in .NET Core, C#, React.js, Angular.js, PHP, Laravel, and Flutter, with <br>  hands-on experience developing  REST APIs, database-driven applications,<br>  and full-stack solutions using technologies such as MySQL.
+            </a>
+            <br />
+
+            <a target="_blank" rel="noopener noreferrer" class="my-text mt-3 mb-5">
+              I enjoy turning ideas and business requirements into reliable, maintainable software <br>  while continuously improving my technical skills and staying up to date <br>  with modern development practices.
+            </a>
+
+            <div class="mb-6">
+              <h1
+                class="text-2xl  font-bold text-gray-900 tracking-tight my-text-tilte mb-3"
+              >
+                Skills
+              </h1>
+              <!-- <p class="text-gray-500 mt-1 my-text-subtilte  mb-3">Technologies & Tools I Use to Build Modern Applications</p> -->
+
+
+               <div
+              class="my-contact-links flex flex-row flex-wrap items-center gap-2 text-sm text-gray-700 mb-4"
+            >
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                class="my-contact-li skills-text"
+              >
+                HTML
+                <i class="fa-brands fa-html5"></i>
+              </a>
+
+              <span class="contact-dot">·</span>
+
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                class="my-contact-li skills-text"
+              >
+                Css 
+                <i class="fa-brands fa-css3"></i>
+              </a>
+
+              <span class="contact-dot">·</span>
+
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                class="my-contact-li skills-text"
+              >
+                Javascript
+                <i class="fa-brands fa-js"></i>
+              </a>
+
+              <span class="contact-dot">·</span>
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                class="my-contact-li skills-text"
+              >
+                Bootstrap 
+                <i class="fa-brands fa-bootstrap"></i>
+              </a>
+
+              <span class="contact-dot">·</span>
+
+                            <a
+                target="_blank"
+                rel="noopener noreferrer"
+                class="my-contact-li skills-text"
+              >
+                Tailwind Css 
+                <i class="fa-brands fa-tailwind-css"></i>
+              </a>
+
+              <span class="contact-dot">·</span>
+
+                  <a
+                target="_blank"
+                rel="noopener noreferrer"
+                class="my-contact-li skills-text"
+              >
+                React.js
+                <i class="fa-brands fa-react"></i> 
+              </a>
+
+              <span class="contact-dot">·</span>
+
+                 <a
+                target="_blank"
+                rel="noopener noreferrer"
+                class="my-contact-li skills-text"
+              >
+                Angular.js
+                <i class="fa-brands fa-angular"></i> 
+              </a>
+
+              <span class="contact-dot">·</span>
+
+              
+                 <a
+                target="_blank"
+                rel="noopener noreferrer"
+                class="my-contact-li skills-text"
+              >
+                php
+                <i class="fa-brands fa-php"></i>
+              </a>
+
+              <span class="contact-dot">·</span>
+
+                  <a
+                target="_blank"
+                rel="noopener noreferrer"
+                class="my-contact-li skills-text"
+              >
+                Laravel
+                <i class="fa-brands fa-laravel"></i>
+              </a>
+
+              <span class="contact-dot">·</span>
+
+              
+                  <a
+                target="_blank"
+                rel="noopener noreferrer"
+                class="my-contact-li skills-text"
+              >
+                MySQL & SQL
+                <i class="fa-solid fa-database"></i>
+              </a>
+
+                  <span class="contact-dot">·</span>
+
+                            <a
+                target="_blank"
+                rel="noopener noreferrer"
+                class="my-contact-li skills-text"
+              >
+                RESTful API
+                <i class="fa-solid fa-network-wired"></i>
+              </a>
+
+                  <span class="contact-dot">·</span>
+
+
+
+                  <a
+                target="_blank"
+                rel="noopener noreferrer"
+                class="my-contact-li skills-text"
+              >
+                Python
+                <i class="fa-brands fa-python"></i>
+              </a>
+
+              <span class="contact-dot">·</span>
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                class="my-contact-li skills-text"
+              >
+                Dart
+                <i class="fa-brands fa-dart-lang"></i>
+              </a>
+
+              <span class="contact-dot">·</span>
+
+                       <a
+                target="_blank"
+                rel="noopener noreferrer"
+                class="my-contact-li skills-text"
+              >
+                Flutter
+                <i class="fa-brands fa-flutter"></i>
+              </a>
+
+              <span class="contact-dot">·</span>
+
+
+               <a
+                target="_blank"
+                rel="noopener noreferrer"
+                class="my-contact-li skills-text"
+              >
+                Node.js
+                <i class="fa-brands fa-node"></i>
+              </a>
+
+              <span class="contact-dot">·</span>
+
+              
+                      <a
+                target="_blank"
+                rel="noopener noreferrer"
+                class="my-contact-li skills-text"
+              >
+                System Design
+                <i class="fa-solid fa-gears"></i>
+              </a>
+
+              <span class="contact-dot">·</span> 
+
+
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                class="my-contact-li skills-text"
+              >
+                LLD & HLD
+                <i class="fa-solid fa-cubes"></i>
+              </a>
+
+              <span class="contact-dot">·</span> 
+              
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                class="my-contact-li skills-text"
+              >
+                Docker
+                <i class="fa-brands fa-docker"></i>
+              </a>
+
+              <span class="contact-dot">·</span> 
+              
+              
+                 <a
+                target="_blank"
+                rel="noopener noreferrer"
+                class="my-contact-li skills-text"
+              >
+                Kubernetes
+                <i class="fa-brands fa-kubernetes"></i>
+              </a>
+
+              <span class="contact-dot">·</span>
+
+
+                            <a
+                target="_blank"
+                rel="noopener noreferrer"
+                class="my-contact-li skills-text"
+              >
+                Visual Studio
+                <i class="fa-brands fa-visual-studio"></i>
+              </a>
+
+              <span class="contact-dot">·</span>
+
+
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                class="my-contact-li skills-text"
+              >
+                Git
+                <i class="fa-brands fa-git-alt"></i>
+              </a>
+
+              <span class="contact-dot">·</span>
+
+              
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                class="my-contact-li skills-text"
+              >
+                GitHub  
+                <i class="fa-brands fa-github"></i>
+              </a>
+
+              <span class="contact-dot">·</span>
+
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                class="my-contact-li skills-text"
+              >
+                Figma  
+                <i class="fa-brands fa-figma"></i>
+              </a>
+
+              <!-- <span class="contact-dot">·</span> -->
+
+
+              </div>
+
+            </div>
+
+
+
+
+
+
+            </div>
+
+            <div>
+              <h1
+                class="text-2xl mb-6 font-bold text-gray-900 tracking-tight my-text-tilte"
+              >
+                Projects
+              </h1>
+
+              <div class="my-project-card">
+                <div class="profile-image-fill-bg mb-5">
+                  <img src="./assets/project/bri.png" class="profile-image" />
+                </div>
+                <h1
+                  class="text-2xl font-bold text-gray-900 tracking-tight my-projects-tilte"
+                >
+                  Vehicle Insurance Management
+                </h1>
+
+                <p class="text-gray-600 text-sm mt-2 leading-relaxed my-text">
+                  The Vehicle Insurance Management System is a web application
+                  developed using .NET to facilitate the management of vehicle
+                  insurance policies. It allows users to register, purchase
+                  insurance policies, and manage claims while providing an admin
+                  panel for policy management and claim processing.
+                </p>
+
+                <div
+                  class="my-contact-links flex flex-row flex-wrap items-center gap-2 mt-3 text-sm text-gray-700"
+                >
+                  <a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="my-contact-li"
+                  >
+                    Vehicle Insurance Management
+                  </a>
+
+                  <span class="contact-dot">·</span>
+
+                  <a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="my-contact-li"
+                  >
+                    SaaS
+                  </a>
+
+                  <span class="contact-dot">·</span>
+
+                  <a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="my-contact-li"
+                  >
+                    2026
+                  </a>
+
+                  <span class="contact-dot">·</span>
+                </div>
+              </div>
+            </div>
+
+
+
+            <!-- ---------------------EEEEEE -->
+
+
+            
+            <div>
+                <h1
+                class="text-2xl mb-3 mt-6 font-bold text-gray-900 tracking-tight my-text-tilte"
+              >
+                Experience
+              </h1>
+
+              
+<section class="experience-section">
+  <div class="experience-list">
+
+    <!-- Experience 1 -->
+    <article class="experience-item ">
+      <div class="experience-header">
+        <div class="experience-logo">
+          <img src="assets/experience/novelope.png" alt="novelope Pakistan">
+        </div>
+
+        <div class="experience-heading">
+          <div class="experience-meta">
+            <h3>Software Developer Intern</h3>
+            <a href="https://novelops.com.pk/" target="_blank"
+               rel="noopener noreferrer">Novelope Pakistan</a>
+            <span class="experience-date">2025 September – Present</span>
+          </div>
+
+
+          <button class="experience-toggle" aria-expanded="false"
+                  aria-label="Expand experience">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m6 9 6 6 6-6"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+
+<div class="experience-content">
+
+    <p class="experience-description">
+        As a Software Developer at Novelops Consulting, I focus on
+        developing reliable, scalable, and user-friendly web applications.
+        I enjoy solving real-world problems, writing clean and maintainable
+        code, and continuously improving my technical skills to deliver
+        high-quality software solutions.
+    </p>
+
+    <ul>
+        <li>Develop reliable, scalable, and user-friendly web applications.</li>
+        <li>Build customized web solutions to meet diverse client needs.</li>
+        <li>Write clean, maintainable code and solve real-world problems.</li>
+        <li>Continuously improve technical skills through hands-on experience and learning.</li>
+        <li>Collaborate with teams to deliver impactful software solutions.</li>
+    </ul>
+</div>
+
+    </article>
+
+    <!-- Experience 2 -->
+    <article class="experience-item">
+      <div class="experience-header">
+      
+           <div class="experience-logo">
+          <img src="assets/experience/simx.webp" alt="SimulationsX">
+        </div>
+
+        <div class="experience-heading">
+          <div class="experience-meta">
+            <h3>Full Stack Developer</h3>
+            <a href="http://games.simulationsx.com/" target="_blank"
+               rel="noopener noreferrer">SimulationsX</a>
+                        <span class="experience-date">2025 December – Present</span>
+
+          </div>
+
+          <button class="experience-toggle" aria-expanded="false"
+                  aria-label="Expand experience">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m6 9 6 6 6-6"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+     
+<div class="experience-content">
+    <p class="experience-description">
+        Worked as a Full Stack Developer at SimulationsX, contributing
+        to game development and software solutions. Developed a TOC
+        (Game of Chance) game, focusing on gameplay functionality,
+        interactive user experiences, and application logic.
+    </p>
+
+    <ul>
+        <li>Developed a TOC game with interactive gameplay and core game logic.</li>
+        <li>Implemented game functionality to provide a smooth and engaging user experience.</li>
+        <li>Applied software development and problem-solving skills throughout the development process.</li>
+        <li>Collaborated on development tasks to improve functionality and overall game quality.</li>
+    </ul>
+</div>
+
+    </article>
+
+     <!-- Experience 3 -->
+    <article class="experience-item">
+      <div class="experience-header">
+      
+           <div class="experience-logo">
+          <img src="assets/experience/surplus.webp" alt="surplus">
+        </div>
+
+        <div class="experience-heading">
+          <div class="experience-meta">
+            <h3>php Laravel Developer</h3>
+            <a href="https://surplus.com.pk" target="_blank"
+               rel="noopener noreferrer">Surplus Pakistan</a>
+                        <span class="experience-date">2026 March – Present</span>
+
+          </div>
+
+          <button class="experience-toggle" aria-expanded="false"
+                  aria-label="Expand experience">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m6 9 6 6 6-6"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+     
+
+<div class="experience-content">
+    <p class="experience-description">
+        Working as a PHP / Laravel Developer at Surplus Pakistan,
+        responsible for maintaining and improving the existing
+        Surplus software. Focused on fixing bugs, ensuring reliable
+        functionality, optimizing performance, and keeping the
+        application up to date.
+    </p>
+
+    <ul>
+        <li>Maintain and update the existing Surplus software using PHP and Laravel.</li>
+        <li>Identify and fix bugs to ensure smooth application functionality.</li>
+        <li>Improve application performance, reliability, and maintainability.</li>
+        <li>Implement updates and resolve issues based on software requirements.</li>
+        <li>Work with databases and backend functionality to maintain data consistency.</li>
+    </ul>
+</div>
+
+
+    </article>
+
+
+        <!-- Experience 4 -->
+    <article class="experience-item">
+      <div class="experience-header">
+      
+           <div class="experience-logo">
+          <img src="assets/experience/count3.png" alt="count3">
+        </div>
+
+        <div class="experience-heading">
+          <div class="experience-meta">
+            <h3>Software Developer</h3>
+            <a href="https://count3.pk" target="_blank"
+               rel="noopener noreferrer">Count3</a>
+                        <span class="experience-date">2026 May – Present</span>
+
+          </div>
+
+          <button class="experience-toggle" aria-expanded="false"
+                  aria-label="Expand experience">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m6 9 6 6 6-6"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+     
+
+<div class="experience-content">
+    <p class="experience-description">
+        Developed Count3, a complete full-stack software application
+        using React.js, PHP RESTful APIs, and MySQL. Responsible for
+        designing the system architecture, building interactive user
+        interfaces, developing backend services, and integrating
+        database functionality to deliver a scalable and maintainable
+        software solution.
+    </p>
+
+    <ul>
+        <li>Developed the complete Count3 software application using React.js, PHP, and MySQL.</li>
+        <li>Built responsive and interactive frontend components using React.js.</li>
+        <li>Designed and implemented RESTful APIs using PHP for frontend-backend communication.</li>
+        <li>Designed the MySQL database structure and integrated database operations.</li>
+        <li>Planned the system architecture and organized application components for maintainability.</li>
+        <li>Integrated frontend, backend APIs, and database functionality into a unified system.</li>
+    </ul>
+</div>
+
+
+
+    </article>
+
+  </div>
+</section>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="px-6 py-12 lg:px-16 bg-white border-t border-gray-200">
+          <div
+            class="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-8"
+          >
+            <div>
+              <h2 class="text-2xl font-bold text-gray-900">Abdullah</h2>
+              <p class="text-gray-500 text-sm mt-1">/ Software Developer</p>
+            </div>
+            <div class="text-xs text-gray-400">
+              <p>© 2024 Abdullah. All rights reserved.</p>
+            </div>
+          </div>
+        </footer>
+      </div>
+      <!-- End Work Mode Content -->
+
+      <!-- ========================================== -->
+      <!-- PLAY MODE CONTENT (Hidden by Default)      -->
+      <!-- ========================================== -->
+      <div
+        id="content-play"
+        class="hidden min-h-screen flex flex-col items-center justify-center p-6 text-center bg-white/80 backdrop-blur-sm"
+      >
+        <div class="max-w-2xl w-full">
+          <!-- Retro Game Theme Card -->
+          <div
+            class="bg-white border-2 border-primary/20 rounded-2xl p-8 md:p-12 shadow-xl relative overflow-hidden"
+          >
+            <!-- Subtle Scanline Effect overlay for white theme -->
+            <div
+              class="absolute inset-0 pointer-events-none opacity-5 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px]"
+            ></div>
+
+            <h2
+              class="text-4xl md:text-5xl font-mono font-bold text-primary mb-4 tracking-tighter"
+            >
+              PLAY_ZONE
+            </h2>
+            <p class="text-gray-500 font-mono mb-8 text-sm">
+              // System ready. Insert coin to continue.
+            </p>
+
+            <!-- Game Grid Placeholder -->
+            <div class="grid grid-cols-2 gap-4 mb-8">
+              <div
+                class="border border-gray-200 bg-gray-50 p-4 rounded-lg flex flex-col items-center hover:border-primary/50 hover:bg-white transition-colors cursor-pointer group shadow-sm"
+              >
+                <div
+                  class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-blue-200 transition-colors"
+                >
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    class="text-primary"
+                  >
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                  </svg>
+                </div>
+                <span class="text-gray-900 font-mono text-sm font-medium"
+                  >Snake.exe</span
+                >
+              </div>
+              <div
+                class="border border-gray-200 bg-gray-50 p-4 rounded-lg flex flex-col items-center hover:border-primary/50 hover:bg-white transition-colors cursor-pointer group shadow-sm"
+              >
+                <div
+                  class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-blue-200 transition-colors"
+                >
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    class="text-primary"
+                  >
+                    <rect x="2" y="6" width="20" height="12" rx="2" ry="2" />
+                    <path d="M6 12h4M8 10v4M15 13h.01M18 11h.01" />
+                  </svg>
+                </div>
+                <span class="text-gray-900 font-mono text-sm font-medium"
+                  >Pong.exe</span
+                >
+              </div>
+            </div>
+
+            <button
+              class="btn-outline px-6 py-3 rounded-lg font-mono text-sm inline-flex items-center gap-2 border-primary/30 text-primary hover:bg-blue-50"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M5 3l14 9-14 9V3z" />
+              </svg>
+              Start Game
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- End Play Mode Content -->
+    </main>
+
+    <!-- ==================== JAVASCRIPT ==================== -->
+    <script>
+      // Toggle Logic
+      function switchMode(mode) {
+        const workContent = document.getElementById("content-work");
+        const playContent = document.getElementById("content-play");
+        const slider = document.getElementById("toggleSlider");
+        const btns = document.querySelectorAll(".toggle-btn");
+
+        // Update Buttons
+        btns.forEach((btn) => btn.classList.remove("active"));
+
+        if (mode === "work") {
+          btns[0].classList.add("active");
+          slider.style.transform = "translateX(0)";
+
+          // Show Work, Hide Play
+          workContent.classList.remove("hidden");
+          workContent.classList.add("block");
+          playContent.classList.add("hidden");
+          playContent.classList.remove("block");
+        } else {
+          btns[1].classList.add("active");
+          slider.style.transform = "translateX(100%)";
+
+          // Show Play, Hide Work
+          workContent.classList.add("hidden");
+          workContent.classList.remove("block");
+          playContent.classList.remove("hidden");
+          playContent.classList.add("block");
+        }
+      }
+    </script>
+
+    <!-- my  -->
+    <srcipt src="assets/js/main.js"></srcipt>
+
+                <script>
+              document.querySelectorAll(".experience-toggle").forEach((button) => {
+    button.addEventListener("click", () => {
+        const item = button.closest(".experience-item");
+        const isExpanded = item.classList.toggle("active");
+
+        button.setAttribute("aria-expanded", String(isExpanded));
+        button.setAttribute(
+            "aria-label",
+            isExpanded ? "Collapse experience" : "Expand experience"
+        );
+
+        button.innerHTML = isExpanded
+            ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>'
+            : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+    });
+});
+
+
+            </script>
+  </body>
+</html>

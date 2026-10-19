@@ -109,7 +109,7 @@
   transition: transform 0.5s ease;
 }
 
-.my-project-card:hover {
+.my-project-card:hover .profile-image {
   transform: translateY(-5px);
 }
 

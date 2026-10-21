@@ -379,7 +379,7 @@
       .experience-content li::before { content: ""; position: absolute; left: 0; top: 7px; width: 12px; height: 1px; background: var(--primary-blue); }
       .experience-content li:hover { color: var(--text-dark); }
       .experience-item .experience-header, .experience-item .experience-content { transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; }
-      .experience-item:hover .experience-header, .experience-item:hover .experience-content { box-shadow: 0 8px 24px rgba(24, 62, 235, 0.06); }
+      /* .experience-item:hover .experience-header, .experience-item:hover .experience-content { box-shadow: 0 8px 24px rgba(24, 62, 235, 0.06); } */
       [data-theme="dark"] .experience-item:hover .experience-header, [data-theme="dark"] .experience-item:hover .experience-content { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); }
 
       @media (max-width: 1023px) { .about-cards { grid-template-columns: repeat(2, 1fr); } .about-hero__name { font-size: 32px; } }
@@ -983,6 +983,77 @@
 @media (prefers-reduced-motion: reduce) {
   .se-icon-reveal, .se-highlight { transition: none; }
   .se-highlight:hover .se-icon-reveal i { animation: none !important; }
+}
+
+/* ============================================================== */
+/* ===== NEW: Experience card hover — ripple + slide-in detail === */
+/* ============================================================== */
+.experience-item .experience-header { position: relative; overflow: hidden; cursor: pointer; }
+.experience-item .experience-header > * { position: relative; z-index: 1; }
+.experience-item.xp-active .experience-header { border-color: var(--primary-blue); }
+
+.xp-ripple {
+  position: absolute !important; z-index: 0 !important; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, color-mix(in srgb, var(--primary-blue) 18%, transparent),
+              color-mix(in srgb, var(--primary-blue) 7%, transparent) 70%);
+  transform: scale(var(--s0, .05)); opacity: .95;
+  transition: transform .75s cubic-bezier(.22, 1, .36, 1), opacity .35s ease;
+}
+.xp-ripple.grow { transform: scale(1); }
+.xp-ripple.out { opacity: 0; }
+
+.xp-stage { position: fixed; inset: 0; z-index: 9990; pointer-events: none; visibility: hidden; transition: visibility 0s .8s; }
+.xp-stage.open { visibility: visible; transition-delay: 0s; }
+.xp-backdrop { position: absolute; inset: 0; background: rgba(8, 12, 24, .38); backdrop-filter: blur(3px); opacity: 0; transition: opacity .5s ease; }
+.xp-stage.open .xp-backdrop { opacity: 1; }
+
+.xp-panel {
+  position: absolute; left: 50%; top: 50%; width: min(720px, 92vw); pointer-events: auto;
+  transform: translate(calc(-50% + 110vw), -50%) skewX(-6deg); opacity: 0;
+  transition: transform .85s cubic-bezier(.16, 1, .3, 1), opacity .4s ease;
+}
+.xp-stage.open .xp-panel { transform: translate(-50%, -50%) skewX(0); opacity: 1; }
+
+.xp-grip {
+  position: absolute; left: -14px; top: 50%; width: 14px; height: 64px; margin-top: -32px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+  background: var(--primary-blue); border-radius: 8px 0 0 8px;
+  box-shadow: 0 6px 18px rgba(24, 62, 235, .35);
+}
+.xp-grip i { width: 3px; height: 3px; border-radius: 50%; background: #fff; opacity: .85; }
+
+.xp-body {
+  position: relative; max-height: 86vh; overflow-y: auto; padding: 26px 28px 24px;
+  background: var(--bg-card); color: var(--text-dark);
+  border: 1px solid var(--border-light); border-top: 3px solid var(--primary-blue); border-radius: 14px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, .28);
+  font-family: "Inter", system-ui, sans-serif;
+}
+.xp-eyebrow { font: 11px "Space Mono", monospace; letter-spacing: 2px; text-transform: uppercase; color: var(--primary-blue); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+.xp-eyebrow::before { content: ""; width: 22px; height: 1px; background: var(--primary-blue); }
+.xp-head { display: flex; align-items: center; gap: 14px; }
+.xp-logo { width: 52px; height: 52px; flex: 0 0 52px; border: 1px solid var(--border-light); border-radius: 12px; background: var(--bg-card); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.xp-logo img { width: 100%; height: 100%; object-fit: contain; padding: 6px; }
+.xp-title { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -.4px; color: var(--text-dark); line-height: 1.25; }
+.xp-sub { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 6px; }
+.xp-sub a { font-size: 13px; font-weight: 500; color: var(--text-muted); text-decoration: underline; text-decoration-color: var(--border-soft); text-underline-offset: 3px; }
+.xp-sub a:hover { color: var(--primary-blue); text-decoration-color: var(--primary-blue); }
+.xp-date { padding: 4px 10px; border-radius: 6px; background: var(--bg-card-alt); border: 1px solid var(--border-light); font-size: 11px; font-weight: 500; color: var(--text-dark); white-space: nowrap; }
+.xp-label { margin: 22px 0 8px; padding-bottom: 8px; border-bottom: 1px solid var(--border-light); font: 600 11px "Space Mono", monospace; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); }
+.xp-desc { margin: 0; font-size: 13.5px; line-height: 1.75; color: var(--text-gray); }
+.xp-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+.xp-list li { position: relative; padding-left: 22px; font-size: 13px; line-height: 1.6; color: var(--text-gray); }
+.xp-list li::before { content: ""; position: absolute; left: 0; top: 10px; width: 12px; height: 1px; background: var(--primary-blue); }
+.xp-close { position: absolute; top: 12px; right: 12px; width: 28px; height: 28px; border: 1px solid var(--border-light); border-radius: 8px; background: var(--bg-card-alt); color: var(--text-muted); cursor: pointer; font-size: 13px; line-height: 1; }
+.xp-close:hover { color: var(--primary-blue); border-color: var(--primary-blue); }
+.xp-swap { animation: xpSwap .35s ease; }
+@keyframes xpSwap { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+@media (hover: none) { .xp-backdrop { pointer-events: auto; } .xp-stage.open { pointer-events: auto; } }
+@media (max-width: 640px) { .xp-body { padding: 22px 18px 18px; } .xp-title { font-size: 17px; } .xp-grip { display: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .xp-panel { transform: translate(-50%, -50%) !important; transition: opacity .3s ease; }
+  .xp-ripple { transition: opacity .2s ease; transform: scale(1); }
 }
 
     </style>
@@ -2675,6 +2746,174 @@
   if (doc.readyState === "loading") doc.addEventListener("DOMContentLoaded", init); else init();
 })();
 
+    </script>
+
+    <!-- ============================================================== -->
+    <!-- NEW: Experience hover — ripple grows from cursor, then a detail -->
+    <!-- card is pulled in from the right to the centre of the page.     -->
+    <!-- ============================================================== -->
+    <script>
+    (function () {
+      var doc = document;
+      var items = Array.prototype.slice.call(doc.querySelectorAll("#about .experience-item"));
+      if (!items.length) return;
+
+      var DATA = {
+        "Novelope Pakistan": {
+          desc: "As a Software Developer at Novelops Consulting, I focus on developing reliable, scalable, and user-friendly web applications. I enjoy solving real-world problems, writing clean and maintainable code, and continuously improving my technical skills to deliver high-quality software solutions.",
+          points: [
+            "Develop reliable, scalable, and user-friendly web applications.",
+            "Build customized web solutions to meet diverse client needs.",
+            "Write clean, maintainable code and solve real-world problems.",
+            "Continuously improve technical skills through hands-on experience and learning.",
+            "Collaborate with teams to deliver impactful software solutions."
+          ]
+        },
+        "SimulationsX": {
+          desc: "Worked as a Full Stack Developer at SimulationsX, contributing to game development and software solutions. Developed a TOC (Game of Chance) game, focusing on gameplay functionality, interactive user experiences, and application logic.",
+          points: [
+            "Developed a TOC game with interactive gameplay and core game logic.",
+            "Implemented game functionality to provide a smooth and engaging user experience.",
+            "Applied software development and problem-solving skills throughout the development process.",
+            "Collaborated on development tasks to improve functionality and overall game quality."
+          ]
+        },
+        "Surplus Pakistan": {
+          desc: "Working as a PHP / Laravel Developer at Surplus Pakistan, responsible for maintaining and improving the existing Surplus software. Focused on fixing bugs, ensuring reliable functionality, optimizing performance, and keeping the application up to date.",
+          points: [
+            "Maintain and update the existing Surplus software using PHP and Laravel.",
+            "Identify and fix bugs to ensure smooth application functionality.",
+            "Improve application performance, reliability, and maintainability.",
+            "Implement updates and resolve issues based on software requirements.",
+            "Work with databases and backend functionality to maintain data consistency."
+          ]
+        },
+        "Count3": {
+          desc: "Developed Count3, a complete full-stack software application using React.js, PHP RESTful APIs, and MySQL. Responsible for designing the system architecture, building interactive user interfaces, developing backend services, and integrating database functionality to deliver a scalable and maintainable software solution.",
+          points: [
+            "Developed the complete Count3 software application using React.js, PHP, and MySQL.",
+            "Built responsive and interactive frontend components using React.js.",
+            "Designed and implemented RESTful APIs using PHP for frontend-backend communication.",
+            "Designed the MySQL database structure and integrated database operations.",
+            "Planned the system architecture and organized application components for maintainability.",
+            "Integrated frontend, backend APIs, and database functionality into a unified system."
+          ]
+        }
+      };
+
+      /* ---- stage ---- */
+      var stage = doc.createElement("div");
+      stage.className = "xp-stage";
+      stage.setAttribute("aria-hidden", "true");
+      stage.innerHTML =
+        '<div class="xp-backdrop"></div>' +
+        '<div class="xp-panel" role="dialog" aria-label="Experience details">' +
+          '<span class="xp-grip" aria-hidden="true"><i></i><i></i><i></i></span>' +
+          '<div class="xp-body"><button type="button" class="xp-close" aria-label="Close">&#10005;</button><div class="xp-content"></div></div>' +
+        '</div>';
+      doc.body.appendChild(stage);
+      var panel = stage.querySelector(".xp-panel");
+      var content = stage.querySelector(".xp-content");
+
+      function esc(s) { var d = doc.createElement("div"); d.textContent = s; return d.innerHTML; }
+
+      function fill(item, animate) {
+        var role = item.querySelector("h3").textContent.trim();
+        var a = item.querySelector(".experience-meta a");
+        var company = a.textContent.trim();
+        var date = item.querySelector(".experience-date").textContent.trim();
+        var img = item.querySelector(".experience-logo img");
+        var d = DATA[company] || { desc: "", points: [] };
+        content.innerHTML =
+          '<div class="xp-eyebrow">// experience</div>' +
+          '<div class="xp-head">' +
+            '<div class="xp-logo">' + (img ? '<img src="' + esc(img.getAttribute("src")) + '" alt="">' : "") + '</div>' +
+            '<div><h3 class="xp-title">' + esc(role) + '</h3>' +
+            '<div class="xp-sub"><a href="' + esc(a.href) + '" target="_blank" rel="noopener noreferrer">' + esc(company) + ' &#8599;</a>' +
+            '<span class="xp-date">' + esc(date) + '</span></div></div>' +
+          '</div>' +
+          (d.desc ? '<div class="xp-label">Overview</div><p class="xp-desc">' + esc(d.desc) + '</p>' : "") +
+          (d.points.length ? '<div class="xp-label">Key Responsibilities</div><ul class="xp-list">' +
+            d.points.map(function (p) { return "<li>" + esc(p) + "</li>"; }).join("") + "</ul>" : "");
+        if (animate) {
+          content.classList.remove("xp-swap"); void content.offsetWidth; content.classList.add("xp-swap");
+        }
+      }
+
+      /* ---- ripple ---- */
+      function startRipple(item, e) {
+        var h = item.querySelector(".experience-header");
+        var r = h.getBoundingClientRect();
+        var x = e && e.clientX != null ? e.clientX - r.left : r.width / 2;
+        var y = e && e.clientY != null ? e.clientY - r.top : r.height / 2;
+        var R = Math.hypot(Math.max(x, r.width - x), Math.max(y, r.height - y));
+        var el = doc.createElement("span");
+        el.className = "xp-ripple";
+        el.style.cssText = "width:" + 2 * R + "px;height:" + 2 * R + "px;left:" + (x - R) + "px;top:" + (y - R) + "px;--s0:" + (14 / (2 * R)).toFixed(4);
+        h.insertBefore(el, h.firstChild);
+        item._rp = el;
+        void el.offsetWidth;
+        requestAnimationFrame(function () { el.classList.add("grow"); });
+      }
+      function endRipple(item) {
+        var el = item._rp;
+        if (!el) return;
+        el.classList.add("out");
+        setTimeout(function () { el.remove(); }, 400);
+        item._rp = null;
+      }
+
+      /* ---- open / close ---- */
+      var tOpen, tClose, isOpen = false;
+      function openFor(item) {
+        clearTimeout(tClose);
+        items.forEach(function (i) { if (i !== item) i.classList.remove("xp-active"); });
+        item.classList.add("xp-active");
+        fill(item, isOpen);
+        isOpen = true;
+        stage.classList.add("open");
+        stage.setAttribute("aria-hidden", "false");
+      }
+      function closeAll() {
+        clearTimeout(tOpen);
+        isOpen = false;
+        stage.classList.remove("open");
+        stage.setAttribute("aria-hidden", "true");
+        items.forEach(function (i) { i.classList.remove("xp-active"); endRipple(i); });
+      }
+      function scheduleClose() { clearTimeout(tClose); tClose = setTimeout(closeAll, 350); }
+
+      var touchMode = window.matchMedia("(hover: none)").matches;
+
+      items.forEach(function (item) {
+        if (!touchMode) {
+          item.addEventListener("mouseenter", function (e) {
+            clearTimeout(tClose); clearTimeout(tOpen);
+            endRipple(item);
+            startRipple(item, e);
+            tOpen = setTimeout(function () { openFor(item); }, isOpen ? 200 : 650);
+          });
+          item.addEventListener("mouseleave", function () {
+            clearTimeout(tOpen);
+            endRipple(item);
+            scheduleClose();
+          });
+        } else {
+          item.addEventListener("click", function (e) {
+            endRipple(item);
+            startRipple(item, e);
+            clearTimeout(tOpen);
+            tOpen = setTimeout(function () { openFor(item); }, 450);
+          });
+        }
+      });
+
+      panel.addEventListener("mouseenter", function () { clearTimeout(tClose); });
+      panel.addEventListener("mouseleave", function () { if (!touchMode) scheduleClose(); });
+      stage.querySelector(".xp-close").addEventListener("click", closeAll);
+      stage.querySelector(".xp-backdrop").addEventListener("click", closeAll);
+      doc.addEventListener("keydown", function (e) { if (e.key === "Escape" && isOpen) closeAll(); });
+    })();
     </script>
   </body>
 </html>

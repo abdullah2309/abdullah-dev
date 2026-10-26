@@ -173,11 +173,15 @@
 }
 
 .skills-text {
-  color: #111111;
+  color: var(--text-dark, #111111);
   font-size: 13px;
   cursor: pointer;
   display: flex;
   gap: 4px;
+}
+/* dark theme: #111 on the dark sidebar would vanish */
+[data-theme="dark"] .skills-text {
+  color: var(--text-gray, #a0a3ad);
 }
 
 
